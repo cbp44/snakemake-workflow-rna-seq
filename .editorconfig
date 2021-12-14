@@ -1,0 +1,29 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+indent_style = space
+indent_size = 4
+
+[*.jinja]
+insert_final_newline = false
+
+[Dockerfile]
+indent_style = space
+indent_size = 2
+
+[*.md]
+indent_style = space
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.tsv]
+indent_style = tab
+
+[*.rst]
+insert_final_newline = false
