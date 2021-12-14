@@ -1,0 +1,18 @@
+version: '3.7'
+
+volumes:
+  snakemake-cache:
+  conda-envs:
+
+services:
+  workflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: workflow
+    init: true
+    volumes:
+      - snakemake-cache:/mnt/snakemake-cache
+      - conda-envs:/mnt/snakemake-envs
+      - ./workflow:/usr/src/code/workflow
+      - ./config:/usr/src/code/config
