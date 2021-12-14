@@ -1,0 +1,23 @@
+# CONFIGURATION -------------------------
+_templates_suffix: .jinja
+_exclude:
+  - ".docker"
+  - ".git"
+  - ".github"
+  - ".test"
+  - ".vagrant"
+  - ".snakemake"
+  - "logs"
+  - "_STARtmp"
+  - "resources"
+  - "results"
+  - ".dockerignore"
+  - ".editorconfig"
+  - ".gitattributes"
+  - ".gitignore"
+  - "copier.yml"
+  - "docker-compose.yml"
+  - "Dockerfile"
+  - "Vagrantfile"
+
+# QUESTIONS FOR USER -------------------------
