@@ -1,0 +1,9 @@
+from snakemake.utils import min_version
+
+min_version("5.0")
+
+
+configfile: "config/config.yaml"
+
+
+container: "docker://continuumio/miniconda3:4.10.3"
