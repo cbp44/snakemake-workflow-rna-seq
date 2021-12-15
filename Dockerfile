@@ -18,8 +18,22 @@ RUN set -eux; \
 	rm -rf /var/lib/apt/lists/* /usr/share/doc/* /usr/share/man/* /opt/conda/man/*
 #################### /miniconda3 ####################
 
+
+#################### snakefmt ####################
+FROM miniconda3 AS snakefmt
+
+# Install snakefmt into snakefmt conda environment
+RUN set -eu; \
+  . /root/.bashrc; \
+  mamba create -y \
+    -n snakefmt; \
+  conda activate snakefmt; \
+  pip install --no-cache-dir snakefmt
+#################### /snakefmt ####################
+
+
 #################### snakemake ####################
-FROM miniconda3 AS snakemake
+FROM snakefmt AS snakemake
 
 # Where snakemake conda environments get created
 ENV SNAKEMAKE_CONDA_PREFIX=/mnt/snakemake-envs
@@ -32,7 +46,7 @@ ARG SNAKEMAKE_VERSION
 ENV SNAKEMAKE_VERSION=${SNAKEMAKE_VERSION:-6.12.3}
 
 RUN set -eux; \
-  mamba create -q -y \
+  mamba create -y \
     -c conda-forge -c bioconda \
     -n snakemake \
     bioconda::snakemake-minimal=="${SNAKEMAKE_VERSION}" \
@@ -46,12 +60,10 @@ RUN set -eux; \
   echo "export SNAKEMAKE_CONDA_PREFIX=$SNAKEMAKE_CONDA_PREFIX" >> ~/.bashrc
 
 ENV PATH=/opt/conda/envs/snakemake/bin:$PATH
-
-
-
 #################### /snakemake ####################
 
-# #################### copier ####################
+
+#################### copier ####################
 FROM snakemake AS copier
 
 RUN set -eux; \
@@ -62,7 +74,8 @@ RUN set -eux; \
   apt autoremove -y; \
   apt-get clean all; \
   rm -rf /var/lib/apt/lists/* /usr/share/doc/* /usr/share/man/* /opt/conda/man/*
-# #################### /copier ####################
+#################### /copier ####################
+
 
 #################### workflow ####################
 FROM copier AS workflow
@@ -74,5 +87,5 @@ COPY . /usr/src/code
 VOLUME ["$SNAKEMAKE_OUTPUT_CACHE", \
         "$SNAKEMAKE_CONDA_PREFIX"]
 
-CMD ["snakemake", "--cores=all", "--use-conda", "--cache"]
+CMD ["snakemake", "--cores=all", "--use-conda", "-p"]
 #################### workflow ####################
