@@ -1,0 +1,17 @@
+version: "3"
+
+# volumes:
+#   rnaseq_test_data:
+
+services:
+  workflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rnaseq_test_data:latest
+    command: ["snakemake","--use-conda","-c2","-p"]
+    volumes:
+      - "./config:/mnt/workflow/config"
+      - "./results:/mnt/workflow/results"
+      - "./workflow:/mnt/workflow/workflow"
+      # - rnaseq_test_data:/mnt/workflow/results

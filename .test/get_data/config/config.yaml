@@ -1,0 +1,5 @@
+encode_gene_silencing_series_acc: ENCSR175SZK
+
+samples: config/samples.tsv
+
+units: config/units.tsv
