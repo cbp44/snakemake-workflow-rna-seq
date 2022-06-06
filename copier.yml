@@ -1,23 +1,12 @@
-# CONFIGURATION -------------------------
-_templates_suffix: .jinja
-_exclude:
-  - ".docker"
-  - ".git"
-  - ".github"
-  - ".test"
-  - ".vagrant"
-  - ".snakemake"
-  - "logs"
-  - "_STARtmp"
-  - "resources"
-  - "results"
-  - ".dockerignore"
-  - ".editorconfig"
-  - ".gitattributes"
-  - ".gitignore"
-  - "copier.yml"
-  - "docker-compose.yml"
-  - "Dockerfile"
-  - "Vagrantfile"
+_min_copier_version: "6.0.0"
 
-# QUESTIONS FOR USER -------------------------
+# CONFIGURATION -------------------------
+_exclude:
+  - "*"
+  - "!config"
+  - "!config/**"
+  - "!workflow"
+  - "!workflow/**"
+  - "!.dockerignore"
+  - "!Dockerfile"
+  - "!README.md"

@@ -1,0 +1,66 @@
+wildcard_constraints:
+    regulation_direction="|".join(["upregulated","downregulated"])
+
+
+rule Get_Diffexp_Gene_List:
+    input:
+        "results/diffexp/{contrast}.diffexp.top_{regulation_direction}.tsv"
+    output:
+        temp("results/variants/{contrast}.{regulation_direction}_genes.tsv"),
+    conda: "../envs/awk.yml"
+    shell:
+        "cat {input} | cut -f 1 | sed 's/\"//g' | tail -n+2 > {output}"
+
+
+rule Get_Diffexp_Exon_BED:
+    input:
+        diffexp_genes="results/variants/{contrast}.{regulation_direction}_genes.tsv",
+        all_exons=get_ensembl_path("genome_exons.bed"),
+    output:
+        exon_bed="results/variants/{contrast}.{regulation_direction}_gene_exons.bed"
+    conda: "../envs/awk.yml"
+    script:
+        "../scripts/get_diffexp_exons.py"
+
+rule Fix_Chromosome_Prefixes:
+    """
+    Remove the 'chr' chromosome prefixes in the min max coords BED file to
+    match the ones used in the ClinVar VCF file.
+    """
+    input:
+        "results/variants/{contrast}.{regulation_direction}_gene_exons.bed"
+    output:
+        temp("results/variants/{contrast}.{regulation_direction}_gene_exons.no_prefixes.bed")
+    version: "0.1"
+    conda: "../envs/awk.yml"
+    shell:
+        "sed s/^chr//g {input[0]} > {output[0]}"
+
+rule Variants_in_Target_Region:
+    """
+    Get all variants in the input.clinvar_vcf file that are within input.target_region_bed.
+    Output is VCF subset of the original VCF.
+    """
+    input:
+        target_region_bed="results/variants/{contrast}.{regulation_direction}_gene_exons.no_prefixes.bed",
+        # clinvar_vcf=get_ensembl_path("clinically_associated_variants.vcf.gz"),
+        clinvar_vcf=get_ensembl_path("clinvar_variants.vcf.gz"),
+    output:
+        "results/variants/{contrast}.clinvar_variants_in_{regulation_direction}_gene_exons.vcf"
+    version: "0.1"
+    conda: "../envs/bedtools.yml"
+    shell:
+        "zcat {input.clinvar_vcf} | bedtools intersect -a stdin -b {input.target_region_bed} -header -wa -u > {output}"
+
+rule Target_Region_Pathogenic_Variants:
+    """
+    Gets the variants in a VCF file classified with keys "Pathogenic", 
+    "Likely_pathogenic" or "Pathogenic/Likely_pathogenic"
+    """
+    input:
+        "results/variants/{contrast}.clinvar_variants_in_{regulation_direction}_gene_exons.vcf"
+    output:
+        "results/variants/{contrast}.{regulation_direction}_gene_pathogenic_variant_summary.tsv"
+    version: "0.1"
+    conda: "../envs/pyvcf.yml"
+    script: "../scripts/get_pathogenic_variants.py"

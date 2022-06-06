@@ -1,6 +1,6 @@
 $schema: "http://json-schema.org/draft-06/schema#"
 
-description: snakemake configuration file
+description: Snakemake configuration file for an RNA-seq workflow
 
 type: object
 

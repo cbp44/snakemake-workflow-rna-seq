@@ -1,5 +1,10 @@
+results/
 results/**
+resources/
 resources/**
+logs/
+logs/**
 .snakemake
-.snakemake/**
-.vagrant/**
+# .snakemake/**
+.vagrant
+# .vagrant/**

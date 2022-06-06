@@ -1,18 +1,16 @@
-version: '3.7'
-
-volumes:
-  snakemake-cache:
-  conda-envs:
+version: "3"
 
 services:
   workflow:
     build:
       context: .
       dockerfile: Dockerfile
-      target: workflow
-    init: true
+    image: rnaseq:latest
+    command: ["snakemake","--use-conda","-c3","-p"]
     volumes:
-      - snakemake-cache:/mnt/snakemake-cache
-      - conda-envs:/mnt/snakemake-envs
-      - ./workflow:/usr/src/code/workflow
-      - ./config:/usr/src/code/config
+      - "./.test/config:/mnt/workflow/config"
+      - "./.test/out/resources:/mnt/workflow/resources"
+      - "/media/user/ref_genomes/h_sapiens:/mnt/workflow/resources/Homo_sapiens"
+      - "./.test/out/results:/mnt/workflow/results"
+      - "./workflow:/mnt/workflow/workflow"
+      - "./.test/out/logs:/mnt/workflow/logs"
