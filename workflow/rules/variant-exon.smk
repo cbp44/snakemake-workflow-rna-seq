@@ -11,16 +11,6 @@ rule Get_DE_Gene_List:
     shell:
         "cut -f 1 {input} | sed 's/\"//g' | tail -n+2 > {output}"
 
-rule Genome_CDS_Regions:
-    input:
-        db=get_ensembl_path("rseqc_annotation.db")
-    output:
-        tsv=get_ensembl_path("cds_regions.tsv")
-    conda:
-        "../envs/gffutils.yaml"
-    script:
-        "../scripts/gtf2tsv.py"
-
 
 rule Get_Gene_CDS_Regions:
     input:

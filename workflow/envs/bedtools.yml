@@ -1,8 +1,7 @@
 name: bedtools
 channels:
-  - bioconda
   - conda-forge
-  - defaults
+  - bioconda
 dependencies:
   - bedtools=2.30.0
-  - gzip=1.10
+  - gzip=1.12

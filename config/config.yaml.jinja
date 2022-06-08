@@ -1,5 +1,6 @@
 # path or URL to sample sheet (TSV format, columns: sample, condition, ...)
 samples: config/samples.tsv
+
 # path or URL to sequencing unit sheet (TSV format, columns: sample, unit, fq1, fq2,
 # strandedness). Units are technical replicates (e.g. lanes, or resequencing of the
 # same biological sample).If the column "strandedness" is present (which is optional),
@@ -30,6 +31,7 @@ diffexp:
   # contrasts for the deseq2 results method
   # add them as change_group-vs-control_group
   contrasts:
+  model: ~condition
 
 params:
   star: ""

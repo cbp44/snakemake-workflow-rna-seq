@@ -15,23 +15,25 @@ rule Count_Matrix:
 
 
 
-
+# TODO: Not working anymore
 rule DESeq2_Init:
     input:
         counts="results/counts/all.tsv"
     output:
-        "results/deseq2/all.rds"
+        "results/deseq2/all.rds",
+        "results/deseq2/normcounts.tsv",
     params:
-        samples=config["samples"]
+        samples=config["samples"],
+        model=config["diffexp"]["model"],
     conda:
         "../envs/deseq2.yaml"
     log:
         "results/logs/deseq2/init.log"
-    threads: 1
+    threads: get_deseq2_threads()
     script:
         "../scripts/deseq2-init.R"
 
-
+# TODO: Not working anymore
 rule PCA:
     input:
         "results/deseq2/all.rds"
@@ -46,7 +48,7 @@ rule PCA:
     script:
         "../scripts/plot-pca.R"
 
-
+# TODO: Not working anymore
 rule DESeq2:
     input:
         "results/deseq2/all.rds"

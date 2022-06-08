@@ -15,11 +15,14 @@ if (snakemake@threads > 1) {
 # colData and countData must have the same sample order, but this is ensured
 # by the way we create the count matrix
 cts <- read.table(snakemake@input[["counts"]], header=TRUE, row.names="gene", check.names=FALSE)
-coldata <- read.table(snakemake@params[["samples"]], header=TRUE, row.names="sample", check.names=FALSE)
+cts <- cts[ , order(names(cts))]
 
-dds <- DESeqDataSetFromMatrix(countData=cts[,rownames(coldata)],
+coldata <- read.table(snakemake@params[["samples"]], header=TRUE, row.names="sample", check.names=FALSE)
+coldata <- coldata[order(row.names(coldata)), , drop=F]
+
+dds <- DESeqDataSetFromMatrix(countData=cts,
                               colData=coldata,
-                              design=~ condition)
+                              design=as.formula(snakemake@params[["model"]]))
 
 # remove uninformative columns
 dds <- dds[ rowSums(counts(dds)) > 1, ]
@@ -27,3 +30,7 @@ dds <- dds[ rowSums(counts(dds)) > 1, ]
 dds <- DESeq(dds, parallel=parallel)
 
 saveRDS(dds, file=snakemake@output[[1]])
+
+# Write normalized counts
+norm_counts = counts(dds, normalized=T)
+write.table(data.frame("gene"=rownames(norm_counts), norm_counts), file=snakemake@output[[2]], sep='\t', row.names=F)

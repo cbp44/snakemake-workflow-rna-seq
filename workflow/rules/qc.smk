@@ -1,20 +1,20 @@
-rule RSeQC_GTF2Bed:
-    input:
-        db=get_ensembl_path("rseqc_annotation.db"),
-    output:
-        bed="results/qc/rseqc/annotation.bed",
-    log:
-        "results/logs/rseqc_gtf2bed.log"
-    conda:
-        "../envs/gffutils.yaml"
-    script:
-        "../scripts/gtf2bed.py"
+# rule RSeQC_GTF2Bed:
+#     input:
+#         db=get_ensembl_path("rseqc_annotation.db"),
+#     output:
+#         bed=get_ensembl_path("transcript_annotation.bed"),
+#     log:
+#         "results/logs/rseqc_gtf2bed.log"
+#     conda:
+#         "../envs/gffutils.yaml"
+#     script:
+#         "../scripts/gtf2bed.py"
 
 
 rule RSeQC_Junction_Annotation:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-        bed="results/qc/rseqc/annotation.bed"
+        bed=get_ensembl_path("transcript_annotation.bed"),
     output:
         "results/qc/rseqc/{sample}-{unit}.junctionanno.junction.bed",
         "results/qc/rseqc/{sample}-{unit}.junctionanno.junction.Interact.bed"
@@ -34,7 +34,7 @@ rule RSeQC_Junction_Annotation:
 rule RSeQC_Junction_Saturation:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-        bed="results/qc/rseqc/annotation.bed"
+        bed=get_ensembl_path("transcript_annotation.bed"),
     output:
         "results/qc/rseqc/{sample}-{unit}.junctionsat.junctionSaturation_plot.pdf"
     priority: 1
@@ -67,7 +67,7 @@ rule RSeQC_Stat:
 rule RSeQC_Infer:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-        bed="results/qc/rseqc/annotation.bed"
+        bed=get_ensembl_path("transcript_annotation.bed"),
     output:
         "results/qc/rseqc/{sample}-{unit}.infer_experiment.txt"
     priority: 1
@@ -82,7 +82,7 @@ rule RSeQC_Infer:
 rule RSeQC_Innerdis:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-        bed="results/qc/rseqc/annotation.bed"
+        bed=get_ensembl_path("transcript_annotation.bed"),
     output:
         "results/qc/rseqc/{sample}-{unit}.inner_distance_freq.inner_distance.txt"
     priority: 1
@@ -99,7 +99,7 @@ rule RSeQC_Innerdis:
 rule RSeQC_Readdis:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-        bed="results/qc/rseqc/annotation.bed"
+        bed=get_ensembl_path("transcript_annotation.bed"),
     output:
         "results/qc/rseqc/{sample}-{unit}.readdistribution.txt"
     priority: 1
