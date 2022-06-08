@@ -15,8 +15,11 @@ rule Align_Reads:
         # path to STAR reference genome index
         idx=get_star_index_path(),
         # optional parameters
-        extra="--limitBAMsortRAM=16000 --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts {0}".format(config['params']['star']),
+        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts {0}".format(config['params']['star']),
     threads: 24
+    # TODO: Add a check to only include this if we are running inside a Docker container
+    resources:
+        tmpdir="/conda-envs/tmpdirs"
     wrapper:
         "v1.5.0/bio/star/align"
 

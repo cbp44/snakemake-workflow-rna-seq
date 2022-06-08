@@ -1,5 +1,6 @@
 *
 !/.test
+!/.test/.config
 !/config
 !/workflow
 !copier.yml

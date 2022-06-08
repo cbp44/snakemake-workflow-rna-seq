@@ -11,16 +11,27 @@ rule Get_DE_Gene_List:
     shell:
         "cut -f 1 {input} | sed 's/\"//g' | tail -n+2 > {output}"
 
+rule Genome_CDS_Regions:
+    input:
+        db=get_ensembl_path("rseqc_annotation.db")
+    output:
+        tsv=get_ensembl_path("cds_regions.tsv")
+    conda:
+        "../envs/gffutils.yaml"
+    script:
+        "../scripts/gtf2tsv.py"
 
-rule Get_Gene_Exons:
+
+rule Get_Gene_CDS_Regions:
     input:
         diffexp_genes="results/variants/{contrast}.{regulation_direction}_genes.tsv",
-        all_exons=get_ensembl_path("genome_exons.bed"),
+        all_exons=get_ensembl_path("cds_regions.tsv"),
     output:
         exon_bed="results/variants/{contrast}.{regulation_direction}_gene_exons.bed"
     conda: "../envs/awk.yml"
     script:
         "../scripts/get_diffexp_exons.py"
+
 
 rule Fix_Chromosome_Prefixes:
     """
@@ -36,7 +47,8 @@ rule Fix_Chromosome_Prefixes:
     shell:
         "sed s/^chr//g {input[0]} > {output[0]}"
 
-rule Variants_in_Exons:
+
+rule Variants_in_CDS_Regions:
     """
     Get all variants in the input.clinvar_vcf file that are within input.target_region_bed.
     Output is VCF subset of the original VCF.
@@ -50,7 +62,8 @@ rule Variants_in_Exons:
     version: "0.1"
     conda: "../envs/bedtools.yml"
     shell:
-        "zcat {input.clinvar_vcf} | bedtools intersect -a stdin -b {input.target_region_bed} -header -wa -u > {output}"
+        "zcat {input.vcf} | bedtools intersect -a stdin -b {input.target_region_bed} -header -wa -u > {output}"
+
 
 rule Extract_Pathogenic_Variants:
     """

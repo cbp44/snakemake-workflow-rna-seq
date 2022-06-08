@@ -10,7 +10,7 @@ services:
     volumes:
       - "./.test/config:/mnt/workflow/config"
       - "./.test/out/resources:/mnt/workflow/resources"
-      - "/media/user/ref_genomes/h_sapiens:/mnt/workflow/resources/Homo_sapiens"
+      - "/media/user/ref_genomes/h_sapiens:/mnt/workflow/resources/homo_sapiens"
       - "./.test/out/results:/mnt/workflow/results"
       - "./workflow:/mnt/workflow/workflow"
       - "./.test/out/logs:/mnt/workflow/logs"

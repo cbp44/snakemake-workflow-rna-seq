@@ -1,6 +1,6 @@
 rule RSeQC_GTF2Bed:
     input:
-        db="resources/ensembl/rseqc_annotation.db",
+        db=get_ensembl_path("rseqc_annotation.db"),
     output:
         bed="results/qc/rseqc/annotation.bed",
     log:

@@ -19,7 +19,7 @@ trimming:
   adapter: CTGTCTCTTATACACATCT
 
 ref:
-  organism: Homo_sapiens
+  organism: homo_sapiens
 
 pca:
   labels:
