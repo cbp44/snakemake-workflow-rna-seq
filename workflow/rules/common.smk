@@ -1,6 +1,15 @@
 import os
 from snakemake.utils import format as smk_format
 
+def in_docker_container():
+    """Checks if we are running inside a Docker conatiner"""
+    with open("/proc/self/cgroup", "r") as procfile:
+        for line in procfile:
+            fields = line.strip().split("/")
+            if "docker" in fields:
+                return True
+    return False
+
 def get_fastq(wildcards):
     return units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
 

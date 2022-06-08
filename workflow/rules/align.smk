@@ -17,9 +17,8 @@ rule Align_Reads:
         # optional parameters
         extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts {0}".format(config['params']['star']),
     threads: 24
-    # TODO: Add a check to only include this if we are running inside a Docker container
     resources:
-        tmpdir="/conda-envs/tmpdirs"
+        tmpdir=lambda wc: "/bigtmp" if in_docker_container() else "/tmp"
     wrapper:
         "v1.5.0/bio/star/align"
 
