@@ -33,6 +33,7 @@ diffexp:
     bclaf1_kd-vs-bclaf1_ctrl:
       - bclaf1_kd
       - bclaf1_ctrl
+  model: ~condition
 
 params:
   star: ""
