@@ -3,7 +3,7 @@ from snakemake.utils import format as smk_format
 
 def get_fastq(wildcards):
     return units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
-    
+
 def get_ensembl_path(extra_path=""):
     if extra_path != "":
         return "resources/{0}/ensembl/{extra_path}".format(config['ref']['organism'], extra_path=extra_path)
@@ -12,7 +12,7 @@ def get_ensembl_path(extra_path=""):
 
 def get_star_index_path():
     ensembl_path = get_ensembl_path()
-    return "{ensembl_path}/star_index".format(ensembl_path=ensembl_path)
+    return "{ensembl_path}/star_genome".format(ensembl_path=ensembl_path)
 
 def get_gtf_annotation_file():
     return get_ensembl_path("genome.gtf.gz")

@@ -22,7 +22,7 @@ units = pd.read_table(config["units"], dtype=str, converters={'fq1': fq_converte
 units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
 validate(units, schema="schemas/units.schema.yaml")
 
-print(config)
+# print(config)
 
 # Constrain the various wildcards to help with any rule ambiguities
 wildcard_constraints:

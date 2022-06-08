@@ -1,6 +1,6 @@
 
 
-rule count_matrix:
+rule Count_Matrix:
     input:
         expand("results/star/{unit.sample}-{unit.unit}/ReadsPerGene.out.tab", unit=units.itertuples())
     output:
@@ -16,7 +16,7 @@ rule count_matrix:
 
 
 
-rule deseq2_init:
+rule DESeq2_Init:
     input:
         counts="results/counts/all.tsv"
     output:
@@ -27,13 +27,12 @@ rule deseq2_init:
         "../envs/deseq2.yaml"
     log:
         "results/logs/deseq2/init.log"
-    threads: get_deseq2_threads()
-    threads: 1
+    threads: get_deseq2_threads
     script:
         "../scripts/deseq2-init.R"
 
 
-rule pca:
+rule PCA:
     input:
         "results/deseq2/all.rds"
     output:
@@ -48,7 +47,7 @@ rule pca:
         "../scripts/plot-pca.R"
 
 
-rule deseq2:
+rule DESeq2:
     input:
         "results/deseq2/all.rds"
     output:
@@ -65,7 +64,7 @@ rule deseq2:
         "../scripts/deseq2.R"
 
 
-rule Get_Top_Upregulated_Diffexp_Genes:
+rule Get_Top_Upregulated_DE_Genes:
     input:
         "results/diffexp/{contrast}.diffexp.tsv",
     output:
@@ -78,7 +77,7 @@ rule Get_Top_Upregulated_Diffexp_Genes:
         "awk -f {params.awk_script} {input}) > {output}"
 
 
-use rule Get_Top_Upregulated_Diffexp_Genes as Get_Top_Downregulated_Diffexp_Genes with:
+use rule Get_Top_Upregulated_DE_Genes as Get_Top_Downregulated_DE_Genes with:
     output:
         "results/diffexp/{contrast}.diffexp.top_downregulated.tsv"
     params:

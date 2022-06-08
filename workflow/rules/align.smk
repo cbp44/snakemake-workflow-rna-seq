@@ -1,31 +1,26 @@
-rule align:
+rule Align_Reads:
     input:
         fq1 = get_fq1,
-    	fq2 = get_fq2
+        fq2 = get_fq2,
     output:
-        # see STAR manual for additional output files
-        "results/star/{sample}-{unit}/Aligned.out.bam",
-        "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-        "results/star/{sample}-{unit}/Log.final.out",
-        "results/star/{sample}-{unit}/Log.out",
-        "results/star/{sample}-{unit}/Log.progress.out",
-        "results/star/{sample}-{unit}/ReadsPerGene.out.tab",
-        "results/star/{sample}-{unit}/SJ.out.tab"
-    shadow: "shallow"
+        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
+        log="results/star/{sample}-{unit}/Log.out",
+        log_final="results/star/{sample}-{unit}/Log.final.out",
+        log_progress="results/star/{sample}-{unit}/Log.progress.out",
+        reads_per_gene="results/star/{sample}-{unit}/ReadsPerGene.out.tab",
+        sj="results/star/{sample}-{unit}/SJ.out.tab",
     log:
         "results/logs/star/{sample}-{unit}.log"
     params:
         # path to STAR reference genome index
-        index=get_star_index_path(),
+        idx=get_star_index_path(),
         # optional parameters
-        extra="--outSAMtype BAM Unsorted SortedByCoordinate --quantMode GeneCounts --sjdbGTFfile {0} {1}".format(get_gtf_annotation_file(), config['params']['star']),
-    resources:
-        mem_mb=128000
+        extra="--limitBAMsortRAM=16000 --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts {0}".format(config['params']['star']),
     threads: 24
     wrapper:
-        "0.65.0/bio/star/align"
+        "v1.5.0/bio/star/align"
 
-rule samtools_index:
+rule Samtools_Index:
     input:
         "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam"
     output:
@@ -35,7 +30,7 @@ rule samtools_index:
     resources:
         mem_mb=6000
     wrapper:
-        "0.65.0/bio/samtools/index"
+        "v1.5.0/bio/samtools/index"
 
 rule signal_track:
     """

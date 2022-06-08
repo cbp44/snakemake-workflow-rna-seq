@@ -1,8 +1,7 @@
+ruleorder: Trim_Adapters_PE > Trim_Adapters_SE
 
 
-ruleorder: cutadapt_pe > cutadapt
-
-rule cutadapt_pe:
+rule Trim_Adapters_PE:
     input:
         get_fastq
     output:
@@ -19,10 +18,10 @@ rule cutadapt_pe:
 	# And, it performs 3' poly-A trimming on the reads
     log: "results/logs/cutadapt/{sample}-{unit}.log"
     wrapper:
-        "0.64.0/bio/cutadapt/pe"
+        "v1.5.0/bio/cutadapt/pe"
 
 
-rule cutadapt:
+rule Trim_Adapters_SE:
     input:
         get_fastq
     output:
@@ -36,4 +35,4 @@ rule cutadapt:
         mem_mb=64000
     log: "results/logs/cutadapt/{sample}-{unit}.log"
     wrapper:
-        "0.64.0/bio/cutadapt/se"
+        "v1.5.0/bio/cutadapt/se"

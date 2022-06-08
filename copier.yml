@@ -10,3 +10,17 @@ _exclude:
   - "!.dockerignore"
   - "!Dockerfile"
   - "!README.md"
+
+
+# QUESTIONS FOR USER -------------------------
+species:
+  type: str
+  help: Give the species whose reference genome we are obtaining
+  default: caenorhabditis_elegans
+  choices:
+    "Human": "homo_sapiens"
+    "Mouse": "mus_musculus"
+    "Zebrafish": "danio_rerio"
+    "Worm (C. elegans)": "caenorhabditis_elegans"
+    "Fruitfly (D. melanogaster)": "drosophila_melanogaster"
+    "Mouse Lemur": "microcebus_murinus"

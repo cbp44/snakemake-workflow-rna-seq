@@ -1,9 +1,8 @@
-rule rseqc_gtf2bed:
+rule RSeQC_GTF2Bed:
     input:
-        get_gtf_annotation_file()
+        db="resources/ensembl/rseqc_annotation.db",
     output:
         bed="results/qc/rseqc/annotation.bed",
-        db=temp("results/qc/rseqc/annotation.db")
     log:
         "results/logs/rseqc_gtf2bed.log"
     conda:
@@ -12,9 +11,9 @@ rule rseqc_gtf2bed:
         "../scripts/gtf2bed.py"
 
 
-rule rseqc_junction_annotation:
+rule RSeQC_Junction_Annotation:
     input:
-        bam="results/star/{sample}-{unit}/Aligned.out.bam",
+        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed="results/qc/rseqc/annotation.bed"
     output:
         "results/qc/rseqc/{sample}-{unit}.junctionanno.junction.bed",
@@ -32,9 +31,9 @@ rule rseqc_junction_annotation:
         "> {log[0]} 2>&1"
 
 
-rule rseqc_junction_saturation:
+rule RSeQC_Junction_Saturation:
     input:
-        bam="results/star/{sample}-{unit}/Aligned.out.bam",
+        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed="results/qc/rseqc/annotation.bed"
     output:
         "results/qc/rseqc/{sample}-{unit}.junctionsat.junctionSaturation_plot.pdf"
@@ -51,9 +50,9 @@ rule rseqc_junction_saturation:
         "> {log} 2>&1"
 
 
-rule rseqc_stat:
+rule RSeQC_Stat:
     input:
-        "results/star/{sample}-{unit}/Aligned.out.bam",
+        "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
     output:
         "results/qc/rseqc/{sample}-{unit}.stats.txt"
     priority: 1
@@ -65,9 +64,9 @@ rule rseqc_stat:
         "bam_stat.py -i {input} > {output} 2> {log}"
 
 
-rule rseqc_infer:
+rule RSeQC_Infer:
     input:
-        bam="results/star/{sample}-{unit}/Aligned.out.bam",
+        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed="results/qc/rseqc/annotation.bed"
     output:
         "results/qc/rseqc/{sample}-{unit}.infer_experiment.txt"
@@ -80,9 +79,9 @@ rule rseqc_infer:
         "infer_experiment.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
 
 
-rule rseqc_innerdis:
+rule RSeQC_Innerdis:
     input:
-        bam="results/star/{sample}-{unit}/Aligned.out.bam",
+        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed="results/qc/rseqc/annotation.bed"
     output:
         "results/qc/rseqc/{sample}-{unit}.inner_distance_freq.inner_distance.txt"
@@ -97,9 +96,9 @@ rule rseqc_innerdis:
         "inner_distance.py -r {input.bed} -i {input.bam} -o {params.prefix} > {log} 2>&1"
 
 
-rule rseqc_readdis:
+rule RSeQC_Readdis:
     input:
-        bam="results/star/{sample}-{unit}/Aligned.out.bam",
+        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed="results/qc/rseqc/annotation.bed"
     output:
         "results/qc/rseqc/{sample}-{unit}.readdistribution.txt"
@@ -112,9 +111,9 @@ rule rseqc_readdis:
         "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
 
 
-rule rseqc_readdup:
+rule RSeQC_Readdup:
     input:
-        "results/star/{sample}-{unit}/Aligned.out.bam"
+        "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam"
     output:
         "results/qc/rseqc/{sample}-{unit}.readdup.DupRate_plot.pdf"
     priority: 1
@@ -128,9 +127,9 @@ rule rseqc_readdup:
         "read_duplication.py -i {input} -o {params.prefix} > {log} 2>&1"
 
 
-rule rseqc_readgc:
+rule RSeQC_ReadGC:
     input:
-        "results/star/{sample}-{unit}/Aligned.out.bam"
+        "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam"
     output:
         "results/qc/rseqc/{sample}-{unit}.readgc.GC_plot.pdf"
     priority: 1
@@ -144,12 +143,12 @@ rule rseqc_readgc:
         "read_GC.py -i {input} -o {params.prefix} > {log} 2>&1"
 
 
-rule multiqc:
+rule MultiQC:
     """
     Create a MultiQC report file using the various rule outputs.
     """
     input:
-        expand("results/star/{unit.sample}-{unit.unit}/Aligned.out.bam", unit=units.itertuples()),
+        expand("results/star/{unit.sample}-{unit.unit}/Aligned.sortedByCoord.out.bam", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.junctionanno.junction.bed", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.junctionsat.junctionSaturation_plot.pdf", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.infer_experiment.txt", unit=units.itertuples()),
