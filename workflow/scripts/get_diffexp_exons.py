@@ -13,7 +13,8 @@ def get_genes_from_exon_bed(bed_filename, fieldnames=None):
         for row in reader:
             gene_hgnc = row.get('gene_hgnc', None)
             if gene_hgnc:
-                genes[gene_hgnc].append(row)
+                # genes[gene_hgnc].append(row)
+                genes[row['ensembl']].append(row)
 
     return genes
 

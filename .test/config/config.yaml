@@ -30,9 +30,9 @@ diffexp:
   # contrasts for the deseq2 results method
   # add them as change_group-vs-control_group
   contrasts:
-    bclaf1_kd-vs-bclaf1_ctrl:
-      - bclaf1_kd
-      - bclaf1_ctrl
+    KD-vs-Ctrl:
+      - KD
+      - Ctrl
   model: ~condition
 
 params:

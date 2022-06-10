@@ -54,8 +54,11 @@ include: "rules/variant-exon.smk"
 def get_all_target_files():
     target_files = []
     target_files.append(expand(["results/diffexp/{contrast}.diffexp.tsv",
-                "results/diffexp/{contrast}.ma-plot.svg"],
-               contrast=config["diffexp"]["contrasts"])),
+        "results/diffexp/{contrast}.ma-plot.svg"],
+        contrast=config["diffexp"]["contrasts"]))
+    target_files.append(expand(["results/diffexp_mane/{contrast}.diffexp.tsv",
+        "results/diffexp_mane/{contrast}.ma-plot.svg"],
+        contrast=config["diffexp"]["contrasts"]))
     target_files.append("results/pca.svg")
     target_files.append("results/qc/multiqc_report.html")
 

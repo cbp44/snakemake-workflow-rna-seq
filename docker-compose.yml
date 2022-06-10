@@ -1,5 +1,9 @@
 version: "3"
 
+volumes:
+  conda-envs:
+    external: true
+
 services:
   workflow:
     build:
@@ -8,9 +12,10 @@ services:
     image: rnaseq:latest
     command: ["snakemake","--use-conda","-c3","-p"]
     volumes:
+      - conda-envs:/conda-envs
       - "./.test/config:/mnt/workflow/config"
-      - "./.test/out/resources:/mnt/workflow/resources"
-      - "/media/user/ref_genomes/h_sapiens:/mnt/workflow/resources/homo_sapiens"
-      - "./.test/out/results:/mnt/workflow/results"
+      - "/media/user/ref_genomes/homo_sapiens/resources:/mnt/workflow/resources/homo_sapiens"
+      # - "./.test/out/results:/mnt/workflow/results"
+      - "./.test/resources/reads:/mnt/workflow/resources/reads"
       - "./workflow:/mnt/workflow/workflow"
       - "./.test/out/logs:/mnt/workflow/logs"

@@ -23,6 +23,10 @@ def get_star_index_path():
     ensembl_path = get_ensembl_path()
     return "{ensembl_path}/star_genome".format(ensembl_path=ensembl_path)
 
+def get_star_mane_index_path():
+    ensembl_path = get_ensembl_path()
+    return "{ensembl_path}/star_genome_mane".format(ensembl_path=ensembl_path)
+
 def get_gtf_annotation_file():
     return get_ensembl_path("genome.gtf.gz")
     # return smk_format("resources/{config['ref']['organism']}/ensembl/genome.gtf.gz")

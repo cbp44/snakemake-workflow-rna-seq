@@ -23,20 +23,28 @@ rule Get_Gene_CDS_Regions:
         "../scripts/get_diffexp_exons.py"
 
 
-rule Fix_Chromosome_Prefixes:
-    """
-    Remove the 'chr' chromosome prefixes in the min max coords BED file to
-    match the ones used in the ClinVar VCF file.
-    """
-    input:
-        "results/variants/{contrast}.{regulation_direction}_gene_exons.bed"
-    output:
-        temp("results/variants/{contrast}.{regulation_direction}_gene_exons.no_prefixes.bed")
-    version: "0.1"
-    conda: "../envs/awk.yml"
-    shell:
-        "sed s/^chr//g {input[0]} > {output[0]}"
+# rule Fix_Chromosome_Prefixes:
+#     """
+#     Remove the 'chr' chromosome prefixes in the min max coords BED file to
+#     match the ones used in the ClinVar VCF file.
+#     """
+#     input:
+#         "results/variants/{contrast}.{regulation_direction}_gene_exons.bed"
+#     output:
+#         temp("results/variants/{contrast}.{regulation_direction}_gene_exons.no_prefixes.bed")
+#     version: "0.1"
+#     conda: "../envs/awk.yml"
+#     shell:
+#         "sed s/^chr//g {input[0]} > {output[0]}"
 
+rule Filter_Bad_Variants:
+    input:
+        get_ensembl_path("clinically_associated_variants.vcf.gz")
+    output:
+        get_ensembl_path("clinically_associated_variants.filtered.vcf.gz")
+    conda: "../envs/bcftools.yaml"
+    shell:
+        "bcftools view -V other {input} | gzip - > {output}"
 
 rule Variants_in_CDS_Regions:
     """
@@ -44,7 +52,7 @@ rule Variants_in_CDS_Regions:
     Output is VCF subset of the original VCF.
     """
     input:
-        target_region_bed="results/variants/{contrast}.{regulation_direction}_gene_exons.no_prefixes.bed",
+        target_region_bed="results/variants/{contrast}.{regulation_direction}_gene_exons.bed",
         vcf=get_ensembl_path("clinically_associated_variants.vcf.gz"),
         # clinvar_vcf=get_ensembl_path("clinvar_variants.vcf.gz"),
     output:

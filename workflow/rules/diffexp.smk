@@ -1,5 +1,3 @@
-
-
 rule Count_Matrix:
     input:
         expand("results/star/{unit.sample}-{unit.unit}/ReadsPerGene.out.tab", unit=units.itertuples())
@@ -13,9 +11,13 @@ rule Count_Matrix:
     script:
         "../scripts/count-matrix.py"
 
+use rule Count_Matrix as Count_Matrix_MANE with:
+    input:
+        expand("results/star_mane/{unit.sample}-{unit.unit}/ReadsPerGene.out.tab", unit=units.itertuples())
+    output:
+        "results/counts_mane/all.tsv"
 
 
-# TODO: Not working anymore
 rule DESeq2_Init:
     input:
         counts="results/counts/all.tsv"
@@ -24,7 +26,7 @@ rule DESeq2_Init:
         "results/deseq2/normcounts.tsv",
     params:
         samples=config["samples"],
-        model=config["diffexp"]["model"],
+        design=config["diffexp"]["model"],
     conda:
         "../envs/deseq2.yaml"
     log:
@@ -33,7 +35,15 @@ rule DESeq2_Init:
     script:
         "../scripts/deseq2-init.R"
 
-# TODO: Not working anymore
+use rule DESeq2_Init as DESeq2_Init_MANE with:
+    input:
+        counts="results/counts_mane/all.tsv"
+    output:
+        "results/deseq2_mane/all.rds",
+        "results/deseq2_mane/normcounts.tsv",
+    log:
+        "results/logs/deseq2_mane/init.log"
+
 rule PCA:
     input:
         "results/deseq2/all.rds"
@@ -48,12 +58,13 @@ rule PCA:
     script:
         "../scripts/plot-pca.R"
 
-# TODO: Not working anymore
+
 rule DESeq2:
     input:
         "results/deseq2/all.rds"
     output:
-        table=report("results/diffexp/{contrast}.diffexp.tsv", "../report/diffexp.rst", category="Differential Expression", subcategory="{contrast}"),
+        table=report("results/diffexp/{contrast}.diffexp.tsv", 
+            "../report/diffexp.rst", category="Differential Expression", subcategory="{contrast}"),
         ma_plot=report("results/diffexp/{contrast}.ma-plot.svg", "../report/ma.rst", category="Differential Expression", subcategory="{contrast}"),
     params:
         contrast=get_contrast
@@ -65,6 +76,15 @@ rule DESeq2:
     script:
         "../scripts/deseq2.R"
 
+use rule DESeq2 as DESeq2_MANE with:
+    input:
+        "results/deseq2_mane/all.rds"
+    output:
+        table=report("results/diffexp_mane/{contrast}.diffexp.tsv", 
+            "../report/diffexp.rst", category="Differential Expression (MANE)", subcategory="{contrast}"),
+        ma_plot=report("results/diffexp_mane/{contrast}.ma-plot.svg", "../report/ma.rst", category="Differential Expression (MANE)", subcategory="{contrast}"),
+    log:
+        "results/logs/deseq2_mane/{contrast}.diffexp.log"
 
 rule Get_Top_Upregulated_DE_Genes:
     input:

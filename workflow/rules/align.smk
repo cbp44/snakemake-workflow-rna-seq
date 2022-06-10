@@ -22,6 +22,23 @@ rule Align_Reads:
     wrapper:
         "v1.5.0/bio/star/align"
 
+use rule Align_Reads as Align_Reads_MANE with:
+    output:
+        bam="results/star_mane/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
+        log="results/star_mane/{sample}-{unit}/Log.out",
+        log_final="results/star_mane/{sample}-{unit}/Log.final.out",
+        log_progress="results/star_mane/{sample}-{unit}/Log.progress.out",
+        reads_per_gene="results/star_mane/{sample}-{unit}/ReadsPerGene.out.tab",
+        sj="results/star_mane/{sample}-{unit}/SJ.out.tab",
+    log:
+        "results/logs/star_mane/{sample}-{unit}.log"
+    params:
+        # path to STAR reference genome index
+        idx=get_star_mane_index_path(),
+        # optional parameters
+        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts {0}".format(config['params']['star']),
+
+
 rule Samtools_Index:
     input:
         "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam"
