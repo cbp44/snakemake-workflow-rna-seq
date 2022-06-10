@@ -32,3 +32,4 @@ plotMA(res, ylim=c(-2,2))
 dev.off()
 
 write.table(data.frame("gene"=rownames(res),res), file=snakemake@output[["table"]], row.names=FALSE, sep='\t')
+# write.table(as.data.frame(res), file=snakemake@output[["table"]])

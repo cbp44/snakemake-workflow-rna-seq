@@ -3,5 +3,6 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
+  # - bioconductor-deseq2=1.18.1
   - bioconductor-deseq2=1.30.0
   - r-ashr=2.2_47

@@ -37,14 +37,14 @@ rule Get_Gene_CDS_Regions:
 #     shell:
 #         "sed s/^chr//g {input[0]} > {output[0]}"
 
-rule Filter_Bad_Variants:
-    input:
-        get_ensembl_path("clinically_associated_variants.vcf.gz")
-    output:
-        get_ensembl_path("clinically_associated_variants.filtered.vcf.gz")
-    conda: "../envs/bcftools.yaml"
-    shell:
-        "bcftools view -V other {input} | gzip - > {output}"
+# rule Filter_Bad_Variants:
+#     input:
+#         get_ensembl_path("clinically_associated_variants.vcf.gz")
+#     output:
+#         get_ensembl_path("clinically_associated_variants.filtered.vcf.gz")
+#     conda: "../envs/bcftools.yaml"
+#     shell:
+#         "bcftools view -V other {input} | gzip - > {output}"
 
 rule Variants_in_CDS_Regions:
     """
@@ -53,7 +53,7 @@ rule Variants_in_CDS_Regions:
     """
     input:
         target_region_bed="results/variants/{contrast}.{regulation_direction}_gene_exons.bed",
-        vcf=get_ensembl_path("clinically_associated_variants.vcf.gz"),
+        vcf=get_ensembl_path("clinically_associated_variants.filtered.vcf.gz"),
         # clinvar_vcf=get_ensembl_path("clinvar_variants.vcf.gz"),
     output:
         "results/variants/{contrast}.clinically_assoc_variants_in_{regulation_direction}_gene_exons.vcf"
