@@ -3,6 +3,10 @@ version: "3"
 volumes:
   conda-envs:
     external: true
+  # homo_sapiens:
+  #   external: true
+  bigtmp:
+    external: true
 
 services:
   workflow:
@@ -16,6 +20,10 @@ services:
       - "./.test/config:/mnt/workflow/config"
       - "/media/user/ref_genomes/homo_sapiens/resources:/mnt/workflow/resources/homo_sapiens"
       # - "./.test/out/results:/mnt/workflow/results"
-      - "./.test/resources/reads:/mnt/workflow/resources/reads"
+      # - "./.test/resources/reads:/mnt/workflow/resources/reads"
+      - "./resources:/mnt/workflow/resources"
+      - "./results:/mnt/workflow/results"
       - "./workflow:/mnt/workflow/workflow"
-      - "./.test/out/logs:/mnt/workflow/logs"
+      - "./logs:/mnt/workflow/logs"
+      # - homo_sapiens:/mnt/workflow/resources/homo_sapiens
+      - bigtmp:/bigtmp
