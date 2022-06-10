@@ -56,13 +56,13 @@ def get_all_target_files():
     target_files.append(expand(["results/diffexp/{contrast}.diffexp.tsv",
         "results/diffexp/{contrast}.ma-plot.svg"],
         contrast=config["diffexp"]["contrasts"]))
-        contrast=config["diffexp"]["contrasts"]))
     target_files.append("results/pca.svg")
     target_files.append("results/qc/multiqc_report.html")
 
     if config["ref"]["organism"] == "homo_sapiens":
         target_files.append(expand(["results/diffexp_mane/{contrast}.diffexp.tsv",
-        "results/diffexp_mane/{contrast}.ma-plot.svg"],
+            "results/diffexp_mane/{contrast}.ma-plot.svg"],
+            contrast=config["diffexp"]["contrasts"]))
         # target_files.append(expand("results/variants/{contrast}.{regulation_direction}_gene_pathogenic_variant_summary.tsv", contrast=config["diffexp"]["contrasts"], regulation_direction=["upregulated","downregulated"]))
 
     return target_files
