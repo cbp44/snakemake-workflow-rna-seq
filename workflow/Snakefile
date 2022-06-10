@@ -49,21 +49,21 @@ include: "rules/qc.smk"
 include: "rules/targets.smk"
 include: "rules/transfer.smk"
 include: "rules/download.smk"
-include: "rules/variant-exon.smk"
+# include: "rules/variant-exon.smk"
 
 def get_all_target_files():
     target_files = []
     target_files.append(expand(["results/diffexp/{contrast}.diffexp.tsv",
         "results/diffexp/{contrast}.ma-plot.svg"],
         contrast=config["diffexp"]["contrasts"]))
-    target_files.append(expand(["results/diffexp_mane/{contrast}.diffexp.tsv",
-        "results/diffexp_mane/{contrast}.ma-plot.svg"],
         contrast=config["diffexp"]["contrasts"]))
     target_files.append("results/pca.svg")
     target_files.append("results/qc/multiqc_report.html")
 
     if config["ref"]["organism"] == "homo_sapiens":
-        target_files.append(expand("results/variants/{contrast}.{regulation_direction}_gene_pathogenic_variant_summary.tsv", contrast=config["diffexp"]["contrasts"], regulation_direction=["upregulated","downregulated"]))
+        target_files.append(expand(["results/diffexp_mane/{contrast}.diffexp.tsv",
+        "results/diffexp_mane/{contrast}.ma-plot.svg"],
+        # target_files.append(expand("results/variants/{contrast}.{regulation_direction}_gene_pathogenic_variant_summary.tsv", contrast=config["diffexp"]["contrasts"], regulation_direction=["upregulated","downregulated"]))
 
     return target_files
 

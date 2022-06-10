@@ -76,6 +76,7 @@ rule DESeq2:
     script:
         "../scripts/deseq2.R"
 
+
 use rule DESeq2 as DESeq2_MANE with:
     input:
         "results/deseq2_mane/all.rds"
@@ -86,21 +87,47 @@ use rule DESeq2 as DESeq2_MANE with:
     log:
         "results/logs/deseq2_mane/{contrast}.diffexp.log"
 
-rule Get_Top_Upregulated_DE_Genes:
+
+rule Get_Top_Upregulated_Genes:
     input:
         "results/diffexp/{contrast}.diffexp.tsv",
     output:
         "results/diffexp/{contrast}.diffexp.top_upregulated.tsv"
-    params:
-        awk_script=workflow.source_path("../scripts/get_top_upregulated_genes.awk")
     conda: "../envs/awk.yml"
     shell:
-        "(echo -e 'gene\\tbaseMean\\tlog2FoldChange\\tlfcSE\\tstat\\tpvalue\\tpadj'; "
-        "awk -f {params.awk_script} {input}) > {output}"
+        """
+        (head -n1 {input}; \
+        tail -n+2 {input} | awk 'BEGIN {{OFS="\\t"}} {{if ($7<=0.1 && $3>0) {{ \
+                print $1,$2,$3,$4,$5,$6,$7}} \
+            }}' | sort -k5,5nr -k3,3n) \
+        > {output}
+        """
 
-
-use rule Get_Top_Upregulated_DE_Genes as Get_Top_Downregulated_DE_Genes with:
+rule Get_Top_Downregulated_Genes:
+    input:
+        "results/diffexp/{contrast}.diffexp.tsv",
     output:
         "results/diffexp/{contrast}.diffexp.top_downregulated.tsv"
-    params:
-        awk_script=workflow.source_path("../scripts/get_top_downregulated_genes.awk")
+    conda: "../envs/awk.yml"
+    shell:
+        """
+        (head -n1 {input}; \
+        tail -n+2 {input} | awk 'BEGIN {{OFS="\\t"}} {{if ($7<=0.1 && $3<0) {{ \
+                print $1,$2,$3,$4,$5,$6,$7}} \
+            }}' | sort -k5,5nr -k3,3n) \
+        > {output}
+        """
+
+
+use rule Get_Top_Upregulated_Genes as Get_Top_Upregulated_MANE_Genes with:
+    input:
+        "results/diffexp_mane/{contrast}.diffexp.tsv",
+    output:
+        "results/diffexp_mane/{contrast}.diffexp.top_upregulated.tsv"
+
+
+use rule Get_Top_Downregulated_Genes as Get_Top_Downregulated_MANE_Genes with:
+    input:
+        "results/diffexp_mane/{contrast}.diffexp.tsv",
+    output:
+        "results/diffexp_mane/{contrast}.diffexp.top_downregulated.tsv"
