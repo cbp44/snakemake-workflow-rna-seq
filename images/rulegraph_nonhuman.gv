@@ -1,0 +1,48 @@
+digraph snakemake_dag {
+    graph[bgcolor="transparent", margin=0];
+    node[shape=box, style=rounded, fontname="Roboto-Regular", fontsize=12, penwidth=2];
+    edge[penwidth=1, color=grey];
+	0[label = "all", color = "0.14 0.6 0.85", style="rounded"];
+	1[label = "PCA", color = "0.14 0.6 0.85", style="rounded"];
+	2[label = "DESeq2_Init", color = "0.40 0.6 0.85", style="rounded"];
+	3[label = "Count_Matrix", color = "0.02 0.6 0.85", style="rounded"];
+	4[label = "Map_Reads", color = "0.06 0.6 0.85", style="rounded"];
+	5[label = "Trim_Adapters_PE", color = "0.65 0.6 0.85", style="rounded"];
+	6[label = "MultiQC", color = "0.30 0.6 0.85", style="rounded"];
+	7[label = "Junction_Annotation", color = "0.59 0.6 0.85", style="rounded"];
+	8[label = "Junction_Saturation", color = "0.34 0.6 0.85", style="rounded"];
+	9[label = "RSeQC_Stat", color = "0.00 0.6 0.85", style="rounded"];
+	10[label = "Inner_Distance", color = "0.24 0.6 0.85", style="rounded"];
+	11[label = "Read_Distribution", color = "0.55 0.6 0.85", style="rounded"];
+	12[label = "Read_Duplication", color = "0.10 0.6 0.85", style="rounded"];
+	13[label = "Read_GC", color = "0.63 0.6 0.85", style="rounded"];
+	14[label = "Top_Upregulated_Genes", color = "0.61 0.6 0.85", style="rounded"];
+	15[label = "DESeq2", color = "0.20 0.6 0.85", style="rounded"];
+	16[label = "Top_Downregulated_Genes", color = "0.42 0.6 0.85", style="rounded"];
+	14 -> 0
+	16 -> 0
+	6 -> 0
+	1 -> 0
+	2 -> 1
+	3 -> 2
+	4 -> 3
+	5 -> 4
+	7 -> 6
+	12 -> 6
+	9 -> 6
+	11 -> 6
+	8 -> 6
+	4 -> 6
+	10 -> 6
+	13 -> 6
+	4 -> 7
+	4 -> 8
+	4 -> 9
+	4 -> 10
+	4 -> 11
+	4 -> 12
+	4 -> 13
+	15 -> 14
+	2 -> 15
+	15 -> 16
+}            

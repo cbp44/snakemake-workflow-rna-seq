@@ -1,12 +1,40 @@
-results/
-results/**
-resources/
-resources/**
-logs/
-logs/**
-analyses/
-analyses/**
-.snakemake
-# .snakemake/**
-.vagrant
-# .vagrant/**
+*
+!/.test
+!/.test/**
+/.test/get_data/results
+!/.
+!/config
+!/config/**
+!/extensions
+!/extensions/*.py
+!/images
+!/images/*.gv
+!/images/*.pdf
+!/workflow
+!/workflow/**
+!*.jinja
+!*.yml
+!.dockerignore
+!.editorconfig
+!.gitattributes
+!.gitignore
+!Dockerfile
+!LICENSE
+!README.md
+!vagrant-init.sh
+!Vagrantfile
+# results/
+# results/**
+# resources/
+# resources/**
+# !/.test/resources/
+# !/.test/resources/reads/
+# #!.test/resources/reads/*.fq.gz
+# logs/
+# logs/**
+# analyses/
+# analyses/**
+# .snakemake
+# # .snakemake/**
+# .vagrant
+# # .vagrant/**
