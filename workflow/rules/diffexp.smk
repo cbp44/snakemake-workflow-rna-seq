@@ -88,11 +88,14 @@ use rule DESeq2 as DESeq2_MANE with:
         "results/logs/deseq2_mane/{contrast}.diffexp.log"
 
 
-rule Get_Top_Upregulated_Genes:
+wildcard_constraints:
+    diffexp="|".join(["diffexp","diffexp_mane"])
+
+rule Top_Upregulated_Genes:
     input:
-        "results/diffexp/{contrast}.diffexp.tsv",
+        "results/{diffexp}/{contrast}.diffexp.tsv",
     output:
-        "results/diffexp/{contrast}.diffexp.top_upregulated.tsv"
+        "results/{diffexp}/{contrast}.diffexp.top_upregulated.tsv"
     conda: "../envs/awk.yml"
     shell:
         """
@@ -103,11 +106,11 @@ rule Get_Top_Upregulated_Genes:
         > {output}
         """
 
-rule Get_Top_Downregulated_Genes:
+rule Top_Downregulated_Genes:
     input:
-        "results/diffexp/{contrast}.diffexp.tsv",
+        "results/{diffexp}/{contrast}.diffexp.tsv",
     output:
-        "results/diffexp/{contrast}.diffexp.top_downregulated.tsv"
+        "results/{diffexp}/{contrast}.diffexp.top_downregulated.tsv"
     conda: "../envs/awk.yml"
     shell:
         """
@@ -119,15 +122,15 @@ rule Get_Top_Downregulated_Genes:
         """
 
 
-use rule Get_Top_Upregulated_Genes as Get_Top_Upregulated_MANE_Genes with:
-    input:
-        "results/diffexp_mane/{contrast}.diffexp.tsv",
-    output:
-        "results/diffexp_mane/{contrast}.diffexp.top_upregulated.tsv"
+# use rule Top_Upregulated_Genes as Top_Upregulated_MANE_Genes with:
+#     input:
+#         "results/diffexp_mane/{contrast}.diffexp.tsv",
+#     output:
+#         "results/diffexp_mane/{contrast}.diffexp.top_upregulated.tsv"
 
 
-use rule Get_Top_Downregulated_Genes as Get_Top_Downregulated_MANE_Genes with:
-    input:
-        "results/diffexp_mane/{contrast}.diffexp.tsv",
-    output:
-        "results/diffexp_mane/{contrast}.diffexp.top_downregulated.tsv"
+# use rule Top_Downregulated_Genes as Top_Downregulated_MANE_Genes with:
+#     input:
+#         "results/diffexp_mane/{contrast}.diffexp.tsv",
+#     output:
+#         "results/diffexp_mane/{contrast}.diffexp.top_downregulated.tsv"

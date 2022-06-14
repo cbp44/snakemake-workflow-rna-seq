@@ -19,7 +19,8 @@ trimming:
   adapter: CTGTCTCTTATACACATCT
 
 ref:
-  organism: homo_sapiens
+  species: homo_sapiens
+  # species: caenorhabditis_elegans
 
 pca:
   labels:

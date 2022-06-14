@@ -18,11 +18,14 @@ indent_size = 2
 indent_style = space
 indent_size = 2
 
-[*.{yml,yaml}]
+[*.{yml,yaml,yml.jinja,yaml.jinja}]
 indent_style = space
 indent_size = 2
 
 [*.tsv]
+indent_style = tab
+
+[*.tsv.jinja]
 indent_style = tab
 
 [*.rst]

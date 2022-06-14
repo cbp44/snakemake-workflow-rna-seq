@@ -1,29 +1,16 @@
 version: "3"
 
-volumes:
-  conda-envs:
-    external: true
-  # homo_sapiens:
-  #   external: true
-  bigtmp:
-    external: true
 
 services:
-  workflow:
+  # The service to configure and initialize a new workflow
+  copier:
     build:
       context: .
       dockerfile: Dockerfile
-    image: rnaseq:latest
-    command: ["snakemake","--use-conda","-c3","-p"]
+      target: copier
+    image: copier:latest
+    # Generate a c elegans workflow by default
+    command: ["copy","/mnt/workflow","/mnt/analyses/test_analysis"]
     volumes:
-      - conda-envs:/conda-envs
-      - "./.test/config:/mnt/workflow/config"
-      - "/media/user/ref_genomes/homo_sapiens/resources:/mnt/workflow/resources/homo_sapiens"
-      # - "./.test/out/results:/mnt/workflow/results"
-      # - "./.test/resources/reads:/mnt/workflow/resources/reads"
-      - "./resources:/mnt/workflow/resources"
-      - "./results:/mnt/workflow/results"
-      - "./workflow:/mnt/workflow/workflow"
-      - "./logs:/mnt/workflow/logs"
-      # - homo_sapiens:/mnt/workflow/resources/homo_sapiens
-      - bigtmp:/bigtmp
+      - ./analyses:/mnt/analyses
+      - ./:/mnt/workflow

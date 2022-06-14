@@ -15,12 +15,12 @@ reads:
 
 trimming:
   # skip trimming: false or true
-  skip: false
+  skip: {{ skip_adapter_trimming }}
   # This adapter sequence will be removed from the 3' end of forward and reverse reads
   adapter: CTGTCTCTTATACACATCT
 
 ref:
-  organism: {{ species }}
+  species: {{ species }}
 
 pca:
   labels:
@@ -31,6 +31,11 @@ diffexp:
   # contrasts for the deseq2 results method
   # add them as change_group-vs-control_group
   contrasts:
+    {% for contrast in diffexp_contrasts -%}
+    {{ contrast.label }}:
+      - {{ contrast.groups[0] }}
+      - {{ contrast.groups[1] }}
+    {% endfor %}
   model: ~condition
 
 params:

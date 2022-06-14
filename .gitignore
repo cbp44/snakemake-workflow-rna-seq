@@ -4,6 +4,8 @@ resources/
 resources/**
 logs/
 logs/**
+analyses/
+analyses/**
 .snakemake
 # .snakemake/**
 .vagrant

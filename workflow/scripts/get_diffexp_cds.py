@@ -39,7 +39,7 @@ def write_gene_exons(bed_filename, gene_exons):
 
 
 # Get the exons of every gene as a list in a dict where the key is the refseq accession number
-all_genes = get_genes_from_exon_bed(snakemake.input.all_exons)
+all_genes = get_genes_from_exon_bed(snakemake.input.cds_regions)
 
 # Pass in the field names here because the input file was created by bedtools which removes the header
 target_genes = get_gene_list(snakemake.input.diffexp_genes)
@@ -55,4 +55,4 @@ for gene_name in target_genes:
     if gene_name in all_genes.keys():
         gene_exons_to_keep.extend(all_genes[gene_name])
 
-write_gene_exons(snakemake.output.exon_bed, gene_exons_to_keep)
+write_gene_exons(snakemake.output.bed, gene_exons_to_keep)

@@ -1,4 +1,4 @@
-rule Align_Reads:
+rule Map_Reads:
     input:
         fq1 = get_fq1,
         fq2 = get_fq2,
@@ -15,14 +15,14 @@ rule Align_Reads:
         # path to STAR reference genome index
         idx=get_star_index_path(),
         # optional parameters
-        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts {0}".format(config['params']['star']),
+        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts"
     threads: 24
     resources:
         tmpdir=lambda wc: "/bigtmp" if in_docker_container() else "/tmp"
     wrapper:
         "v1.5.0/bio/star/align"
 
-use rule Align_Reads as Align_Reads_MANE with:
+use rule Map_Reads as Map_Reads_MANE with:
     output:
         bam="results/star_mane/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         log="results/star_mane/{sample}-{unit}/Log.out",
@@ -35,8 +35,6 @@ use rule Align_Reads as Align_Reads_MANE with:
     params:
         # path to STAR reference genome index
         idx=get_star_mane_index_path(),
-        # optional parameters
-        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts {0}".format(config['params']['star']),
 
 
 rule Samtools_Index:

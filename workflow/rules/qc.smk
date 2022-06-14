@@ -11,7 +11,7 @@
 #         "../scripts/gtf2bed.py"
 
 
-rule RSeQC_Junction_Annotation:
+rule Junction_Annotation:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed=get_ensembl_path("transcript_annotation.bed"),
@@ -31,7 +31,7 @@ rule RSeQC_Junction_Annotation:
         "> {log[0]} 2>&1"
 
 
-rule RSeQC_Junction_Saturation:
+rule Junction_Saturation:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed=get_ensembl_path("transcript_annotation.bed"),
@@ -64,22 +64,22 @@ rule RSeQC_Stat:
         "bam_stat.py -i {input} > {output} 2> {log}"
 
 
-rule RSeQC_Infer:
-    input:
-        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-        bed=get_ensembl_path("transcript_annotation.bed"),
-    output:
-        "results/qc/rseqc/{sample}-{unit}.infer_experiment.txt"
-    priority: 1
-    log:
-        "results/logs/rseqc/rseqc_infer/{sample}-{unit}.log"
-    conda:
-        "../envs/rseqc.yaml"
-    shell:
-        "infer_experiment.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+# rule RSeQC_Infer:
+#     input:
+#         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
+#         bed=get_ensembl_path("transcript_annotation.bed"),
+#     output:
+#         "results/qc/rseqc/{sample}-{unit}.infer_experiment.txt"
+#     priority: 1
+#     log:
+#         "results/logs/rseqc/rseqc_infer/{sample}-{unit}.log"
+#     conda:
+#         "../envs/rseqc.yaml"
+#     shell:
+#         "infer_experiment.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
 
 
-rule RSeQC_Innerdis:
+rule Inner_Distance:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed=get_ensembl_path("transcript_annotation.bed"),
@@ -96,7 +96,7 @@ rule RSeQC_Innerdis:
         "inner_distance.py -r {input.bed} -i {input.bam} -o {params.prefix} > {log} 2>&1"
 
 
-rule RSeQC_Readdis:
+rule Read_Distribution:
     input:
         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
         bed=get_ensembl_path("transcript_annotation.bed"),
@@ -111,7 +111,7 @@ rule RSeQC_Readdis:
         "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
 
 
-rule RSeQC_Readdup:
+rule Read_Duplication:
     input:
         "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam"
     output:
@@ -127,7 +127,7 @@ rule RSeQC_Readdup:
         "read_duplication.py -i {input} -o {params.prefix} > {log} 2>&1"
 
 
-rule RSeQC_ReadGC:
+rule Read_GC:
     input:
         "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam"
     output:
@@ -151,7 +151,7 @@ rule MultiQC:
         expand("results/star/{unit.sample}-{unit.unit}/Aligned.sortedByCoord.out.bam", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.junctionanno.junction.bed", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.junctionsat.junctionSaturation_plot.pdf", unit=units.itertuples()),
-        expand("results/qc/rseqc/{unit.sample}-{unit.unit}.infer_experiment.txt", unit=units.itertuples()),
+        # expand("results/qc/rseqc/{unit.sample}-{unit.unit}.infer_experiment.txt", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.stats.txt", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.inner_distance_freq.inner_distance.txt", unit=units.itertuples()),
         expand("results/qc/rseqc/{unit.sample}-{unit.unit}.readdistribution.txt", unit=units.itertuples()),

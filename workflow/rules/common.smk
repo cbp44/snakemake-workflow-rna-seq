@@ -1,6 +1,11 @@
 import os
 from snakemake.utils import format as smk_format
 
+def is_human_genome():
+    """Returns true if this is configured as a human genome
+    """
+    return config["ref"]["species"] == "homo_sapiens"
+
 def in_docker_container():
     """Checks if we are running inside a Docker conatiner"""
     with open("/proc/self/cgroup", "r") as procfile:
@@ -15,9 +20,15 @@ def get_fastq(wildcards):
 
 def get_ensembl_path(extra_path=""):
     if extra_path != "":
-        return "resources/{0}/ensembl/{extra_path}".format(config['ref']['organism'], extra_path=extra_path)
+        return "resources/{0}/ensembl/{extra_path}".format(config['ref']['species'], extra_path=extra_path)
     else:
-        return "resources/{0}/ensembl".format(config["ref"]["organism"])
+        return "resources/{0}/ensembl".format(config["ref"]["species"])
+
+def get_clinvar_path(extra_path=""):
+    if extra_path != "":
+        return "resources/{0}/clinvar/{extra_path}".format(config['ref']['species'], extra_path=extra_path)
+    else:
+        return "resources/{0}/clinvar".format(config["ref"]["species"])
 
 def get_star_index_path():
     ensembl_path = get_ensembl_path()

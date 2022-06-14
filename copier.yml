@@ -1,18 +1,33 @@
 _min_copier_version: "6.0.0"
+_answers_file: ".copier-answers.yml"
 
 # CONFIGURATION -------------------------
 _exclude:
   - "*"
   - "!config"
   - "!config/**"
+  - "!images"
+  - "!images/*.pdf"
   - "!workflow"
   - "!workflow/**"
   - "!.dockerignore"
   - "!Dockerfile"
   - "!README.md"
+  - "!.copier-answers.yml"
+  - "!docker-compose.yml"
 
+_jinja_extensions:
+  - copier_templates_extensions.TemplateExtensionLoader
+  - extensions/context.py:ContextUpdater
+
+_tasks:
+  - "mkdir -p resources/reads"
+#   - "mkdir -p resources/{{ species }}"
+#   - ["ln","-s","-T","/mnt/genomes/{{ species }}/resources/ensembl","resources/{{ species }}/ensembl"]
+#   - "{% if species == "homo_sapiens" %}ln -s -T /mnt/genomes/{% species %}/resources/clinvar resources/{% species %}/clinvar{% endif %}"
 
 # QUESTIONS FOR USER -------------------------
+
 species:
   type: str
   help: Give the species whose reference genome we are obtaining
@@ -24,3 +39,51 @@ species:
     "Worm (C. elegans)": "caenorhabditis_elegans"
     "Fruitfly (D. melanogaster)": "drosophila_melanogaster"
     "Mouse Lemur": "microcebus_murinus"
+
+skip_adapter_trimming:
+  type: bool
+  help: Should we skip the adapter trimming step? Keep this enabled for HKUST service, but disable it if analyzing public data.
+  default: false
+
+is_hkust:
+  type: bool
+  default: true
+  help: Is this an analysis for the HKUST sequencing service?
+
+sequencing_read_folder:
+  type: str
+  help: Enter the path where the sequencing reads exist. The fastq files will be copied from here, so this path needs to be fully accessible right now.
+  default: /disk2/bgi/R1100400190016B
+
+sample_sheet:
+  type: str
+  help: Please specify the absolute path to the sample sheet TSV file that contains the sample/unit information to be auto-extracted.
+  placeholder: sample_sheet.tsv
+  default: sample_sheet.tsv
+  when: "{% if is_hkust %}true{% endif %}"
+
+user_id:
+  type: int
+  help: Specify the user ID number corresponding to the encoded value in the "Expt grouping" column. This is the first number before an underscore (_), for example, 1_A0_2 => 1.
+  placeholder: 1
+  default: 1
+  when: "{% if is_hkust %}true{% endif %}"
+
+experiment_id:
+  type: str
+  help: Specify the experiment ID letter corresponding to the encoded value in the "Expt grouping" column. This is the first letter after the first underscore (_), for example, 1_A0_2 => A.
+  placeholder: A
+  when: "{% if is_hkust %}true{% endif %}"
+
+# auto_copy_reads:
+#   type: bool
+#   default: true
+#   help: Should we try to automatically copy over the sequencing reads matching the samples in the sample sheet?
+#   when: "{% if auto_gen_tsvs %}true{% endif %}"
+
+# seq_read_path:
+#   type: str
+#   help: Please specify the full path where the sequencing reads can be copied from.
+#   placeholder: /disk2/bgi/R1100400190016B/V300081210
+#   default: /disk2/bgi/R1100400190016B/V300081210
+#   when: "{% if auto_copy_reads %}true{% endif %}"
