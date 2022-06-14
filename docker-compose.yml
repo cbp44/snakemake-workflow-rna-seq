@@ -14,3 +14,4 @@ services:
     volumes:
       - ./analyses:/mnt/analyses
       - ./:/mnt/workflow
+      - ./.test/resources/reads:/disk2/bgi/R1100400190016B

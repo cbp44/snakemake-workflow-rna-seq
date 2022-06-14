@@ -1,6 +1,6 @@
-sample	unit	fq1	fq2
+sample	unit	fq1	fq2	fq1_full	fq2_full
 {% for sample in samples -%}
 {% for unit in sample.units -%}
-{{ sample.id }}	{{ unit.lane }}	{{ unit.fq1 }}	{{ unit.fq2 }}
+{{ sample.id }}	{{ unit.lane }}	{{ unit.fq1 }}	{{ unit.fq2 }}	{{ unit.fq1_full }}	{{ unit.fq2_full }}
 {% endfor -%}
 {% endfor %}

@@ -1,29 +1,23 @@
 localrules: download_files_local
 
-rule download_files_local:
-    """
-    Copy the fastq files from the local server to the project folder.
-    """
-    output:
-        protected("resources/reads/{sequencing_run}_{lane}_{barcode}_1.fq.gz"),
-        protected("resources/reads/{sequencing_run}_{lane}_{barcode}_2.fq.gz")
-    wildcard_constraints:
-        lane="L01|L02|L03|L04",
-        barcode="\d+"
-    shell:
-        "cp /disk2/bgi/R1100400190016B/{wildcards.sequencing_run}/{wildcards.lane}/`basename {output[0]}` {output[0]}; "
-        "cp /disk2/bgi/R1100400190016B/{wildcards.sequencing_run}/{wildcards.lane}/`basename {output[1]}` {output[1]}; "
+def find_unit_by_fastq_file(filename, read_col="fq1"):
+    if filename.endswith("1"):
+        fq_col = "fq1"
+        fq_full_col = "fq1_full"
+    elif filename.endswith("2"):
+        fq_col = "fq2"
+        fq_full_col = "fq2_full"
 
-#rule download_files:
-#    """
-#    Download the fastq files from the remote server using rsync.
-#    """
-#    output:
-#        protected("resources/reads/{sequencing_run}_{lane}_{barcode}_1.fq.gz"),
-#        protected("resources/reads/{sequencing_run}_{lane}_{barcode}_2.fq.gz")
-#    wildcard_constraints:
-#        lane="L01|L02|L03|L04",
-#        barcode="\d+"
-#    shell:
-#        "rsync -v -h --progress --archive --no-D ngs.ust.hk:/disk2/bgi/R1100400190016B/{wildcards.sequencing_run}/{wildcards.lane}/`basename {output[0]}` {output[0]}; "
-#        "rsync -v -h --progress --archive --no-D ngs.ust.hk:/disk2/bgi/R1100400190016B/{wildcards.sequencing_run}/{wildcards.lane}/`basename {output[1]}` {output[1]}; "
+    units_reindexed = units.set_index(fq_col)
+
+    found_files = units_reindexed.loc[f"resources/reads/{filename}.fq.gz", [fq_full_col]]
+
+    return found_files
+
+rule download_files_local:
+    input:
+        lambda wc: find_unit_by_fastq_file(wc.filename)
+    output:
+        "resources/reads/{filename}.fq.gz"
+    shell:
+        "cp -av --dereference {input} {output}"

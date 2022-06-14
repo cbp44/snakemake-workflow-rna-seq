@@ -1,6 +1,7 @@
 import os
 import uuid
 import csv
+import glob
 import re
 import unicodedata
 import itertools
@@ -31,12 +32,12 @@ class ContextUpdater(ContextHook):
         """
         super(ContextUpdater, self).__init__(environment, **kwargs)
         
-        print(self)
-        print(dir(self))
-        print(environment)
-        print(dir(environment))
-        print(dir(ContextUpdater))
-        print(kwargs)
+        # print(self)
+        # print(dir(self))
+        # print(environment)
+        # print(dir(environment))
+        # print(dir(ContextUpdater))
+        # print(kwargs)
         # Generate a unique id that is persisted for all file contexts
         self.unique_id = uuid.uuid4()
         self.working_dir = os.getcwd()
@@ -138,6 +139,7 @@ class ContextUpdater(ContextHook):
         # sort them by replicate number, then by treatment condition
         return sorted(sorted([dict(
                 sample_num=s["Sample number"],
+                original_id=s["Sample name"],
                 id=s["sample_name_slug"],
                 barcode=s["Barcode2"],
                 condition_label=s["condition_label"],
@@ -153,6 +155,41 @@ class ContextUpdater(ContextHook):
             ) for s in samples], key=lambda s: s["replicate_num"]), key=lambda s: s["condition_num"])
         
 
+    def find_sequencing_files(self, samples, sequencing_read_folder):
+        """Searches the given sequencing_read_folder for the samples defined in
+        samples created by read_sample_sheet()
+        """
+        for sample in samples:
+            for unit in sample["units"]:
+                fq1 = unit["fq1"]
+                fq2 = unit["fq2"]
+
+                fq1_full = glob.glob(os.path.join(sequencing_read_folder, "**", fq1), recursive=True)
+
+                fq2_full = glob.glob(os.path.join(sequencing_read_folder, "**", fq2), recursive=True)
+
+                # Couldn't find the fastq file, throw error
+                if len(fq1_full) < 1:
+                    raise FileNotFoundError(f"Error finding sequencing reads for sample {sample['original_id']} from sample sheet. Could not find {fq1} under the directory {sequencing_read_folder}")
+
+                # Found too many fastq files, throw error
+                if len(fq1_full) > 1:
+                    raise OSError(f"Found more than one fastq files for sample {sample['original_id']} under {sequencing_read_folder}. Make sure there is only one file for this sample.")
+            
+                # Couldn't find the fastq file, throw error
+                if len(fq2_full) < 1:
+                    raise FileNotFoundError(f"Error finding sequencing reads for sample {sample['original_id']} from sample sheet. Could not find {fq2} under the directory {sequencing_read_folder}")
+
+                # Found too many fastq files, throw error
+                if len(fq2_full) > 1:
+                    raise OSError(f"Found more than one fastq files for sample {sample['original_id']} under {sequencing_read_folder}. The file {fq2} exists in more than one place.")
+
+                unit["fq1_full"] = fq1_full[0]
+                unit["fq2_full"] = fq2_full[0]
+        
+        
+
+
     def hook(self, context):
         species = context.get("species")
         is_hkust = context.get("is_hkust", False)
@@ -162,17 +199,7 @@ class ContextUpdater(ContextHook):
             "unique_id": self.unique_id,
             "docker_image": f"rnaseq:{self.unique_id}",
         }
-        
-        
-        # template_path = context["_src_path"]
-        # # dest_path = context["_copier_conf"]["dst_path"]
-        # sample_sheet_path = self.get_sample_sheet_path(context)
-        # samples = []
-        # comparison_items = []
-        # print(self.working_dir)
-        # print(dir(self))
-        # print(dir(context["_copier_conf"].keys()))
-        print(dir(context))
+    
         if is_hkust:
             user_id = context["user_id"]
 
@@ -193,6 +220,15 @@ class ContextUpdater(ContextHook):
                 condition_labels.append(condition_label)
             comparisons = [tuple(reversed(c)) for c in itertools.combinations(condition_labels, 2)]
             comparison_items = [dict(label=f"{c[0]}-vs-{c[1]}", groups=c) for c in comparisons]
+
+            # look for sequencing files
+            sequencing_read_folder = context.get("sequencing_read_folder", None)
+            if not sequencing_read_folder:
+                raise ValueError("You need to specify a sequencing read folder.")
+            sequencing_read_folder = os.path.realpath(sequencing_read_folder, strict=True)
+            fq_files = self.find_sequencing_files(samples, sequencing_read_folder)
+            print(samples)
+            # print(fq_files)
 
             extra_context["diffexp_contrasts"] = comparison_items
             

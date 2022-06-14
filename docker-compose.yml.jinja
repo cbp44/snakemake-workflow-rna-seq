@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: workflow
-    image: {{ docker_image }}:{{ unique_id }}
+    image: {{ docker_image }}
     command: ["snakemake","--use-conda","--cores=all","-p"]
     volumes:
       # Path to store conda environments, created externally

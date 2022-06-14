@@ -28,7 +28,7 @@ rule Junction_Annotation:
         "../envs/rseqc.yaml"
     shell:
         "junction_annotation.py {params.extra} -i {input.bam} -r {input.bed} -o {params.prefix} "
-        "> {log[0]} 2>&1"
+        "> {log} 2>&1"
 
 
 rule Junction_Saturation:
@@ -64,19 +64,19 @@ rule RSeQC_Stat:
         "bam_stat.py -i {input} > {output} 2> {log}"
 
 
-# rule RSeQC_Infer:
-#     input:
-#         bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
-#         bed=get_ensembl_path("transcript_annotation.bed"),
-#     output:
-#         "results/qc/rseqc/{sample}-{unit}.infer_experiment.txt"
-#     priority: 1
-#     log:
-#         "results/logs/rseqc/rseqc_infer/{sample}-{unit}.log"
-#     conda:
-#         "../envs/rseqc.yaml"
-#     shell:
-#         "infer_experiment.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+rule RSeQC_Infer:
+    input:
+        bam="results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
+        bed=get_ensembl_path("transcript_annotation.bed"),
+    output:
+        "results/qc/rseqc/{sample}-{unit}.infer_experiment.txt"
+    priority: 1
+    log:
+        "results/logs/rseqc/rseqc_infer/{sample}-{unit}.log"
+    conda:
+        "../envs/rseqc.yaml"
+    shell:
+        "infer_experiment.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
 
 
 rule Inner_Distance:
