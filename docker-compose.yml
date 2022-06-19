@@ -3,7 +3,7 @@ version: "3"
 
 services:
   # The service to configure and initialize a new workflow
-  copier:
+  copier: 
     build:
       context: .
       dockerfile: Dockerfile

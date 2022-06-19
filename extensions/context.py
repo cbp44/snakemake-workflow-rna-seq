@@ -32,12 +32,6 @@ class ContextUpdater(ContextHook):
         """
         super(ContextUpdater, self).__init__(environment, **kwargs)
         
-        # print(self)
-        # print(dir(self))
-        # print(environment)
-        # print(dir(environment))
-        # print(dir(ContextUpdater))
-        # print(kwargs)
         # Generate a unique id that is persisted for all file contexts
         self.unique_id = uuid.uuid4()
         self.working_dir = os.getcwd()
@@ -53,7 +47,6 @@ class ContextUpdater(ContextHook):
                 sample_sheet_path = os.path.realpath(sample_sheet, strict=True)
             else:
                 # otherwise, let's try and turn it into an absolute path
-                # print(os.path.relpath(sample_sheet, start=template_path))
                 sample_sheet_path = os.path.realpath(os.path.join(template_path, sample_sheet), strict=True)
         except:
             raise FileNotFoundError(f"Unable to find sample sheet {sample_sheet}, please make sure you tryped the filename and path properly.")
@@ -227,8 +220,6 @@ class ContextUpdater(ContextHook):
                 raise ValueError("You need to specify a sequencing read folder.")
             sequencing_read_folder = os.path.realpath(sequencing_read_folder, strict=True)
             fq_files = self.find_sequencing_files(samples, sequencing_read_folder)
-            print(samples)
-            # print(fq_files)
 
             extra_context["diffexp_contrasts"] = comparison_items
             

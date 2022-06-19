@@ -35,6 +35,8 @@ use rule Map_Reads as Map_Reads_MANE with:
     params:
         # path to STAR reference genome index
         idx=get_star_mane_index_path(),
+        # optional parameters
+        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts"
 
 
 rule Samtools_Index:
