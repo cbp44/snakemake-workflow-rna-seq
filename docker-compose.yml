@@ -1,0 +1,17 @@
+version: "3"
+
+
+services:
+  # The service to configure and initialize a new workflow
+  copier:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: copier
+    image: copier:latest
+    # Generate a c elegans workflow by default
+    command: ["copy","/mnt/workflow","/mnt/analyses/test_analysis"]
+    volumes:
+      - ./analyses:/mnt/analyses
+      - ./:/mnt/workflow
+      - ./.test/resources/reads:/disk2/bgi/R1100400190016B

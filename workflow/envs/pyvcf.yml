@@ -1,0 +1,6 @@
+name: pyvcf
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - pyvcf=0.6.8

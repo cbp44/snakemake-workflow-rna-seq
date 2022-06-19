@@ -1,0 +1,68 @@
+import pandas as pd
+import os
+from snakemake.utils import format as smk_format
+
+configfile: "config/config.yaml"
+
+
+samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
+
+
+units = pd.read_table(config["units"], dtype=str).set_index(["sample", "unit"], drop=False)
+
+units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
+
+units['sample_name'] = units['sample'] + '_rep' + units['unit']
+
+
+# wildcard_constraints:
+#     sample="|".join(set(units['sample'].tolist())),
+#     unit="|".join(set(units['unit'].tolist())),
+
+
+def get_fastq_files(sample, unit):
+    fq1 = units.loc[(sample, unit), 'fq1']
+    fq2 = units.loc[(sample, unit), 'fq2']
+    return fq1, fq2
+
+
+def get_all_fastqs():
+    return [os.path.join("results/reads", x) for x in units['fq1'].tolist() + units['fq2'].tolist()]
+
+def get_downsampled_fastqs():
+    return [os.path.join("results/downsampled", x) for x in units['fq1'].tolist() + units['fq2'].tolist()]
+
+rule all:
+    input:
+        get_all_fastqs(),
+        get_downsampled_fastqs()
+
+
+rule download_fastq:
+    output:
+        temp("results/reads/{encode_acc}.fastq.gz")
+    params:
+        url=lambda wc: smk_format("https://www.encodeproject.org/files/{wc.encode_acc}/@@download/{wc.encode_acc}.fastq.gz"),
+    shadow: "minimal"
+    retries: 3
+    shell:
+        "curl -o {output} --retry 3 --location {params.url}"
+    
+
+rule downsample_fastq:
+    input:
+        ancient("results/reads/{encode_acc}.fastq.gz")
+    output:
+        "results/downsampled/{encode_acc}.fastq"
+    conda: "envs/seqtk.yml"
+    shell:
+        "seqtk sample -s100 {input} 10000 > {output}"
+
+rule gzip:
+    input:
+        "results/downsampled/{encode_acc}.fastq"
+    output:
+        "results/downsampled/{encode_acc}.fastq.gz"
+    conda: "envs/seqtk.yml"
+    shell:
+        "gzip -c {input} > {output}"

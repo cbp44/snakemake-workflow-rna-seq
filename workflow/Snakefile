@@ -1,0 +1,95 @@
+import pandas as pd
+from snakemake.utils import min_version, validate
+from snakemake.utils import format as smk_format
+
+##### set minimum snakemake version #####
+min_version("6.0")
+
+
+configfile: "config/config.yaml"
+
+
+validate(config, "schemas/config.schema.yaml")
+
+samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
+validate(samples, schema="schemas/samples.schema.yaml")
+
+
+def fq_converter(fastq_file):
+    return f"{config['reads']['path']}/{fastq_file}"
+
+unit_dtypes = {
+  "sample": str,
+  "unit": str,
+  "strandedness": str,
+}
+
+units = pd.read_table(config["units"], dtype=unit_dtypes, converters={'fq1': fq_converter, 'fq2': fq_converter}).set_index(["sample", "unit"], drop=False)
+units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
+validate(units, schema="schemas/units.schema.yaml")
+
+# print(config)
+
+# Constrain the various wildcards to help with any rule ambiguities
+wildcard_constraints:
+    sample="|".join(set(units['sample'].tolist())),
+    unit="|".join(set(units['unit'].tolist())),
+    contrast="|".join(set(config["diffexp"]["contrasts"]))
+
+
+
+##### load rules #####
+
+include: "rules/common.smk"
+include: "rules/trim.smk"
+include: "rules/map.smk"
+include: "rules/diffexp.smk"
+include: "rules/qc.smk"
+# include: "rules/trackhub.smk"
+# include: "rules/targets.smk"
+# include: "rules/transfer.smk"
+include: "rules/download.smk"
+include: "rules/variant-exon.smk"
+
+def get_all_target_files():
+    target_files = []
+    # target_files.append(expand(["results/diffexp/{contrast}.diffexp.tsv",
+    #     "results/diffexp/{contrast}.ma-plot.svg"],
+    #     contrast=config["diffexp"]["contrasts"]))
+    target_files.append("results/pca.svg")
+    target_files.append("results/qc/multiqc_report.html")
+    
+    target_files.append(expand("results/diffexp/{contrast}.diffexp.top_{regulation_direction}.tsv",
+        contrast=config["diffexp"]["contrasts"],
+        regulation_direction=["upregulated","downregulated"]))
+
+    if is_human_genome():    
+        target_files.append(expand("results/diffexp_mane/{contrast}.diffexp.top_{regulation_direction}.tsv",
+            contrast=config["diffexp"]["contrasts"],
+            regulation_direction=["upregulated","downregulated"]))
+        # target_files.append(expand(["results/diffexp_mane/{contrast}.diffexp.tsv",
+        #     "results/diffexp_mane/{contrast}.ma-plot.svg"],
+        #     contrast=config["diffexp"]["contrasts"]))
+        target_files.append(expand("results/variants/{contrast}.{regulation_direction}_gene_pathogenic_variant_summary.tsv", contrast=config["diffexp"]["contrasts"], regulation_direction=["upregulated","downregulated"]))
+
+    return target_files
+
+
+rule all:
+    input:
+        get_all_target_files()
+
+##### setup report #####
+
+report: "report/workflow.rst"
+
+rule report:
+    """
+    Specify the output files we want to show up in the report workflow graph.
+    """
+    input:
+        expand(["results/diffexp/{contrast}.diffexp.tsv",
+                "results/diffexp/{contrast}.ma-plot.svg"],
+               contrast=config["diffexp"]["contrasts"]),
+        "results/pca.svg",
+        "results/qc/multiqc_report.html"

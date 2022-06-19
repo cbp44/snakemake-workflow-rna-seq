@@ -1,0 +1,7 @@
+name: awk
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - main::gawk=5.1.*
+  - conda-forge::gzip=1.12

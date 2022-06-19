@@ -1,0 +1,5 @@
+sample	condition	encode_experiment
+bclaf1_kd_rep1	Treatment_1	ENCSR410ZPU
+bclaf1_kd_rep2	Treatment_1	ENCSR410ZPU
+ctrl_rep1	Control	ENCSR245BNJ
+ctrl_rep2	Control	ENCSR245BNJ

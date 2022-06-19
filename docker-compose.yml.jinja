@@ -1,0 +1,44 @@
+version: "3"
+
+volumes:
+  # These volumes need to be created manually first
+
+  # docker volume create conda-envs
+  #  -OR-
+  # docker volume create --opt type=none --opt o=bind --opt device=/mnt/local/disk2/conda-envs/ conda-envs
+  conda-envs:
+    external: true
+  
+  # docker volume create --opt type=none --opt o=bind --opt device=/mnt/local/disk2/genomes/{{ species }}/resources/ {{ species }}
+  {{ species }}:
+    external: true
+
+  # docker volume create --opt type=none --opt o=bind --opt device=/mnt/local/disk2/bigtmp/ bigtmp
+  bigtmp:
+    external: true
+
+services:
+  workflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: workflow
+    image: {{ docker_image }}
+    command: ["snakemake","--use-conda","--cores=all","-p"]
+    volumes:
+      # Path to store conda environments, created externally
+      - conda-envs:/conda-envs
+      
+      # The reference genome for {{ species }}
+      - "{{ species }}:/mnt/workflow/resources/{{ species }}"
+
+      # A large directory to store temporary workflow files, needed by STAR
+      - bigtmp:/bigtmp
+
+      - "./config:/mnt/workflow/config"
+      - "./resources:/mnt/workflow/resources"
+      - "./results:/mnt/workflow/results"
+      - "./workflow:/mnt/workflow/workflow"
+
+      # For testing
+      # - "/home/user/GitHub/@cbp44/snakemake-workflow-rna-seq/.test/resources/reads:/disk2/bgi/R1100400190016B:ro"

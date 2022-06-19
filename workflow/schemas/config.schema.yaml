@@ -1,0 +1,15 @@
+$schema: "http://json-schema.org/draft-06/schema#"
+
+description: Snakemake configuration file for an RNA-seq workflow
+
+type: object
+
+properties:
+  samples:
+    type: string
+  units:
+    type: string
+
+required:
+  - samples
+  - units

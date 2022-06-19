@@ -1,0 +1,5 @@
+sample	unit	fq1	fq2
+bclaf1_kd_rep1	1	ENCSR410ZPU_L01_1_1.fq.gz	ENCSR410ZPU_L01_1_2.fq.gz
+bclaf1_kd_rep2	1	ENCSR410ZPU_L01_2_1.fq.gz	ENCSR410ZPU_L01_2_2.fq.gz
+ctrl_rep1	1	ENCSR245BNJ_L01_1_1.fq.gz	ENCSR245BNJ_L01_1_2.fq.gz
+ctrl_rep2	1	ENCSR245BNJ_L01_2_1.fq.gz	ENCSR245BNJ_L01_2_2.fq.gz
