@@ -9,11 +9,12 @@ services:
       dockerfile: Dockerfile
       target: copier
     image: copier_rnaseq:latest
-    command: ["copy","/mnt/workflow","/mnt/analyses/test_analysis"]
+    command: ["copy","/mnt/workflow","/mnt/workflows/test_analysis"]
     volumes:
       # - ./:/mnt/workflow
       # New analyses can be saved here
-      - ./analyses:/mnt/analyses
-      # Specify the source path to your reads on the left
-      # - ./.test/resources/reads:/mnt/reads
-      # - /disk2/bgi/R1100400190016B:/mnt/reads
+      # Testing:
+      - ./workflows:/mnt/workflows
+      # Production:
+      #- /home/ngsinternal/workflows:/mnt/workflows
+      

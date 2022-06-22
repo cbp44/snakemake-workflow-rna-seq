@@ -13,7 +13,7 @@ configfile: "config/config.yaml"
 validate(config, "schemas/config.schema.yaml")
 
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
-validate(samples, schema="schemas/samples.schema.yaml")
+#validate(samples, schema="schemas/samples.schema.yaml")
 
 def find_sequencing_files(fastq_file, sequencing_read_folder=config['reads']['path']):
     """Searches the given sequencing_read_folder for the samples defined in
@@ -46,7 +46,7 @@ units.index = units.index.set_levels([i.astype(str) for i in units.index.levels]
 units["fq1_full"] = units["fq1"].apply(fq_converter)
 units["fq2_full"] = units["fq2"].apply(fq_converter)
 
-validate(units, schema="schemas/units.schema.yaml")
+#validate(units, schema="schemas/units.schema.yaml")
 
 # Constrain the various wildcards to help with any rule ambiguities
 wildcard_constraints:

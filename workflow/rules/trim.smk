@@ -15,7 +15,7 @@ if not skip_trimming:
         threads: 24
         params:
             adapters="-a {0} -A {0} {1}".format(config["trimming"]["adapter"], config["params"]["cutadapt-pe"]),
-            others="--minimum-length=30 -a A\{100\} -A A\{100\}"
+            extra="--minimum-length=30 -a A\{100\} -A A\{100\}"
         resources:
             mem_mb=64000
         # This is so that it only keeps a set of reads if both pairs are at least 20bp long
@@ -34,7 +34,7 @@ if not skip_trimming:
         threads: 24
         params:
             adapters="-a {0} {1}".format(config["trimming"]["adapter"], config["params"]["cutadapt-se"]),
-            others="--minimum-length=35 -a A\{100\}"
+            extra="--minimum-length=35 -a A\{100\}"
         resources:
             mem_mb=64000
         log: "results/logs/cutadapt/{sample}-{unit}.log"
