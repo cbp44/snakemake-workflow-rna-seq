@@ -30,7 +30,7 @@ rule Map_Reads:
         idx=get_star_index_path(),
         # optional parameters
         extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts"
-    threads: 12
+    threads: 24
     resources:
         tmpdir=lambda wc: "/bigtmp" if in_docker_container() else "/tmp"
     wrapper:
