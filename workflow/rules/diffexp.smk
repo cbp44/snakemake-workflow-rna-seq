@@ -18,6 +18,19 @@ use rule Count_Matrix as Count_Matrix_MANE with:
         "results/counts_mane/all.tsv"
 
 
+rule Map_Gene_IDs:
+    input:
+        tsv="results/{path}/{filename}.tsv",
+        gene_id_map="results/gene_id_map.tsv",
+    output:
+        tsv="results/{path}/{filename}.with_gene_name.tsv",
+    conda:
+        "../envs/pandas.yml"
+    wildcard_constraints:
+        counts_path="|".join(["counts","counts_mane","diffexp","diffexp_mane","deseq2","deseq2_mane"])
+    script:
+        "../scripts/map_gene_ids.py"
+
 rule DESeq2_Init:
     input:
         counts="results/counts/all.tsv"
