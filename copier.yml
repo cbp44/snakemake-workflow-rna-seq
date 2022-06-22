@@ -15,6 +15,7 @@ _exclude:
   - "!README.md"
   - "!.copier-answers.yml"
   - "!docker-compose.yml"
+  - "!.dockerignore"
 
 _jinja_extensions:
   - copier_templates_extensions.TemplateExtensionLoader
@@ -58,8 +59,8 @@ is_hkust:
 sample_sheet:
   type: str
   help: Please specify the absolute path to the sample sheet TSV file that contains the sample/unit information to be auto-extracted.
-  placeholder: sample_sheet.tsv
-  default: sample_sheet.tsv
+  placeholder: /mnt/workflows/sample_sheet.tsv
+  default: /mnt/workflows/sample_sheet.tsv
   when: "{% if is_hkust %}true{% endif %}"
 
 user_id:

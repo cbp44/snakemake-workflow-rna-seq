@@ -77,7 +77,7 @@ class ContextUpdater(ContextHook):
                     
                     # skip processing this sample if it doesn't match the specified user id or experiment id
                     if user_id != filter_user_id or experiment_id != filter_experiment_id:
-                        next
+                        continue
 
                     try:
                         sample["Sample number"] = int(sample["Sample number"].strip())
@@ -147,41 +147,6 @@ class ContextUpdater(ContextHook):
                 replicate_num=s["replicate_num"],
             ) for s in samples], key=lambda s: s["replicate_num"]), key=lambda s: s["condition_num"])
         
-
-    def find_sequencing_files(self, samples, sequencing_read_folder):
-        """Searches the given sequencing_read_folder for the samples defined in
-        samples created by read_sample_sheet()
-        """
-        for sample in samples:
-            for unit in sample["units"]:
-                fq1 = unit["fq1"]
-                fq2 = unit["fq2"]
-
-                fq1_full = glob.glob(os.path.join(sequencing_read_folder, "**", fq1), recursive=True)
-
-                fq2_full = glob.glob(os.path.join(sequencing_read_folder, "**", fq2), recursive=True)
-
-                # Couldn't find the fastq file, throw error
-                if len(fq1_full) < 1:
-                    raise FileNotFoundError(f"Error finding sequencing reads for sample {sample['original_id']} from sample sheet. Could not find {fq1} under the directory {sequencing_read_folder}")
-
-                # Found too many fastq files, throw error
-                if len(fq1_full) > 1:
-                    raise OSError(f"Found more than one fastq files for sample {sample['original_id']} under {sequencing_read_folder}. Make sure there is only one file for this sample.")
-            
-                # Couldn't find the fastq file, throw error
-                if len(fq2_full) < 1:
-                    raise FileNotFoundError(f"Error finding sequencing reads for sample {sample['original_id']} from sample sheet. Could not find {fq2} under the directory {sequencing_read_folder}")
-
-                # Found too many fastq files, throw error
-                if len(fq2_full) > 1:
-                    raise OSError(f"Found more than one fastq files for sample {sample['original_id']} under {sequencing_read_folder}. The file {fq2} exists in more than one place.")
-
-                unit["fq1_full"] = fq1_full[0]
-                unit["fq2_full"] = fq2_full[0]
-        
-        
-
 
     def hook(self, context):
         species = context.get("species")
