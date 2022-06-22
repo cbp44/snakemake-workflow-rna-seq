@@ -40,5 +40,4 @@ services:
       - "./results:/mnt/workflow/results"
       - "./workflow:/mnt/workflow/workflow"
 
-      # For testing
-      # - "/home/user/GitHub/@cbp44/snakemake-workflow-rna-seq/.test/resources/reads:/disk2/bgi/R1100400190016B:ro"
+      - "{{ sequencing_read_folder }}:/mnt/reads"

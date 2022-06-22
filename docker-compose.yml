@@ -9,9 +9,11 @@ services:
       dockerfile: Dockerfile
       target: copier
     image: copier:latest
-    # Generate a c elegans workflow by default
     command: ["copy","/mnt/workflow","/mnt/analyses/test_analysis"]
     volumes:
+      # - ./:/mnt/workflow
+      # New analyses can be saved here
       - ./analyses:/mnt/analyses
-      - ./:/mnt/workflow
-      - ./.test/resources/reads:/disk2/bgi/R1100400190016B
+      # Specify the source path to your reads on the left
+      # - ./.test/resources/reads:/mnt/reads
+      # - /disk2/bgi/R1100400190016B:/mnt/reads

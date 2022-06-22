@@ -216,10 +216,10 @@ class ContextUpdater(ContextHook):
 
             # look for sequencing files
             sequencing_read_folder = context.get("sequencing_read_folder", None)
-            if not sequencing_read_folder:
+            if not sequencing_read_folder or len(sequencing_read_folder) == 0:
                 raise ValueError("You need to specify a sequencing read folder.")
-            sequencing_read_folder = os.path.realpath(sequencing_read_folder, strict=True)
-            fq_files = self.find_sequencing_files(samples, sequencing_read_folder)
+            # sequencing_read_folder = os.path.realpath(sequencing_read_folder, strict=True)
+            # fq_files = self.find_sequencing_files(samples, sequencing_read_folder)
 
             extra_context["diffexp_contrasts"] = comparison_items
             

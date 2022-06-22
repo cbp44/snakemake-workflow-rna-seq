@@ -16,7 +16,8 @@ def in_docker_container():
     return False
 
 def get_fastq(wildcards):
-    return units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
+    return expand(f"resources/reads/{wildcards.sample}-{wildcards.unit}.{{read_num}}.fastq.gz", read_num=[1,2])
+    # return units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
 
 def get_ensembl_path(extra_path=""):
     if extra_path != "":
@@ -58,10 +59,12 @@ def get_strandness(units):
         return strand_list*units.shape[0]
 
 
-def get_fq(wildcards, read_num=1):
+def get_fq(wildcards, read_num=1, host_path=True):
+    if host_path:
+        return units.loc[(wildcards.sample, wildcards.unit), ["fq1_full" if read_num == 1 else "fq2_full"]].dropna()
     if config["trimming"]["skip"]:
         # no trimming, use raw reads
-        return units.loc[(wildcards.sample, wildcards.unit), ["fq1" if read_num == 1 else "fq2"]].dropna()
+        return f"resources/reads/{wildcards.sample}-{wildcards.unit}.{read_num}.fastq.gz"
     else:
         # yes trimming, use trimmed data
         return expand("results/trimmed/{sample}-{unit}.{read_num}.fastq.gz",
@@ -69,13 +72,17 @@ def get_fq(wildcards, read_num=1):
 
 
 def get_fq1(wildcards):
-    return get_fq(wildcards, read_num=1)
+    return get_fq(wildcards, read_num=1, host_path=False)
 
 
 def get_fq2(wildcards):
-    return get_fq(wildcards, read_num=2)
+    return get_fq(wildcards, read_num=2, host_path=False)
 
+def get_fq1_host(wildcards, host_path=True):
+    return get_fq(wildcards, read_num=1, host_path=True)
 
+def get_fq2_host(wildcards, host_path=True):
+    return get_fq(wildcards, read_num=2, host_path=True)
 
 def get_deseq2_threads(wildcards=None):
     # https://twitter.com/mikelove/status/918770188568363008
