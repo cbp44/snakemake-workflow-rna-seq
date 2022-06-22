@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: copier
-    image: copier:latest
+    image: copier_rnaseq:latest
     command: ["copy","/mnt/workflow","/mnt/analyses/test_analysis"]
     volumes:
       # - ./:/mnt/workflow
