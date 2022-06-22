@@ -25,7 +25,7 @@ rule Map_Gene_IDs:
     output:
         tsv="results/{path}/{filename}.with_gene_name.tsv",
     conda:
-        "../envs/pandas.yml"
+        "../envs/pandas.yaml"
     wildcard_constraints:
         counts_path="|".join(["counts","counts_mane","diffexp","diffexp_mane","deseq2","deseq2_mane"])
     script:
