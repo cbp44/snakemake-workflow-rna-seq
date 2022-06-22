@@ -6,8 +6,9 @@ rule Copy_Reads:
         fq1 = "resources/reads/{sample}-{unit}.1.fastq.gz",
         fq2 = "resources/reads/{sample}-{unit}.2.fastq.gz"
     shell:
-        "cp -av {input.fq1} {output.fq1}; "
-        "cp -av {input.fq2} {output.fq2}"
+        "cp -v {input.fq1} {output.fq1}; "
+        "cp -v {input.fq2} {output.fq2}; "
+        "chmod 0644 {output.fq1} {output.fq2}"
 
 
 rule Map_Reads:
