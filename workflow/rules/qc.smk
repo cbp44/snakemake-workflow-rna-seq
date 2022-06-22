@@ -163,6 +163,7 @@ rule MultiQC:
     log:
         "results/logs/multiqc.log"
     params:
-        "" # Optional: extra parameters for multiqc.
+        use_input_files_only=True,
+        extra="" # Optional: extra parameters for multiqc.
     wrapper:
-        "0.65.0/bio/multiqc"
+        "v1.7.0/bio/multiqc"
