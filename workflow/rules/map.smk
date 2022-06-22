@@ -5,6 +5,7 @@ rule Copy_Reads:
     output:
         fq1 = "resources/reads/{sample}-{unit}.1.fastq.gz",
         fq2 = "resources/reads/{sample}-{unit}.2.fastq.gz"
+    threads: 6
     shell:
         "cp -v {input.fq1} {output.fq1}; "
         "cp -v {input.fq2} {output.fq2}; "
@@ -29,7 +30,7 @@ rule Map_Reads:
         idx=get_star_index_path(),
         # optional parameters
         extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts"
-    threads: 24
+    threads: 12
     resources:
         tmpdir=lambda wc: "/bigtmp" if in_docker_container() else "/tmp"
     wrapper:

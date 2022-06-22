@@ -12,7 +12,7 @@ if not skip_trimming:
             fastq1="results/trimmed/{sample}-{unit}.1.fastq.gz",
             fastq2="results/trimmed/{sample}-{unit}.2.fastq.gz",
             qc="results/trimmed/{sample}-{unit}.qc.txt"
-        threads: 24
+        threads: 8
         params:
             adapters="-a {0} -A {0} {1}".format(config["trimming"]["adapter"], config["params"]["cutadapt-pe"]),
             extra="--minimum-length=30 -a A\{100\} -A A\{100\}"
@@ -31,7 +31,7 @@ if not skip_trimming:
         output:
             fastq="results/trimmed/{sample}-{unit}.fastq.gz",
             qc="results/trimmed/{sample}-{unit}.qc.txt"
-        threads: 24
+        threads: 8
         params:
             adapters="-a {0} {1}".format(config["trimming"]["adapter"], config["params"]["cutadapt-se"]),
             extra="--minimum-length=35 -a A\{100\}"
