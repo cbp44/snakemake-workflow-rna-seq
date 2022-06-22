@@ -31,7 +31,7 @@ rule Variants_in_CDS_Regions:
     input:
         target_region_bed="results/variants/{contrast}.{regulation_direction}_gene_cds_regions.bed",
         # vcf=get_ensembl_path("clinically_associated_variants.filtered.vcf.gz"),
-        vcf=get_clinvar_path("clinvar.filtered.vcf.gz"),
+        vcf=get_clinvar_path("clinvar.vcf.gz"),
     output:
         "results/variants/{contrast}.clinically_assoc_variants_in_{regulation_direction}_gene_cds.vcf"
     version: "0.1"

@@ -1,3 +1,15 @@
+rule Copy_Reads:
+    input:
+        fq1 = get_fq1_host,
+        fq2 = get_fq2_host,
+    output:
+        fq1 = "resources/reads/{sample}-{unit}.1.fastq.gz",
+        fq2 = "resources/reads/{sample}-{unit}.2.fastq.gz"
+    shell:
+        "cp -av {input.fq1} {output.fq1}; "
+        "cp -av {input.fq2} {output.fq2}"
+
+
 rule Map_Reads:
     input:
         fq1 = get_fq1,
@@ -35,6 +47,8 @@ use rule Map_Reads as Map_Reads_MANE with:
     params:
         # path to STAR reference genome index
         idx=get_star_mane_index_path(),
+        # optional parameters
+        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts"
 
 
 rule Samtools_Index:

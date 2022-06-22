@@ -1,3 +1,4 @@
+import glob
 import pandas as pd
 from snakemake.utils import min_version, validate
 from snakemake.utils import format as smk_format
@@ -14,21 +15,38 @@ validate(config, "schemas/config.schema.yaml")
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
 validate(samples, schema="schemas/samples.schema.yaml")
 
+def find_sequencing_files(fastq_file, sequencing_read_folder=config['reads']['path']):
+    """Searches the given sequencing_read_folder for the samples defined in
+    samples created by read_sample_sheet()
+    """
+    fastq_path = glob.glob(os.path.join(sequencing_read_folder, "**", fastq_file), recursive=True)
+    # Couldn't find the fastq file, throw error
+    if len(fastq_path) < 1:
+        raise FileNotFoundError(f"Error finding sequencing reads for {fastq_path} under the directory {sequencing_read_folder}")
 
+    # Found too many fastq files, throw error
+    if len(fastq_path) > 1:
+        raise OSError(f"Found more than one file for {fastq_path} under the directory {sequencing_read_folder}")
+        
+    return fastq_path[0]
+        
 def fq_converter(fastq_file):
-    return f"{config['reads']['path']}/{fastq_file}"
+    return find_sequencing_files(fastq_file, config['reads']['path'])
 
 unit_dtypes = {
   "sample": str,
   "unit": str,
   "strandedness": str,
+  "fq1": str,
+  "fq2": str
 }
 
-units = pd.read_table(config["units"], dtype=unit_dtypes, converters={'fq1': fq_converter, 'fq2': fq_converter}).set_index(["sample", "unit"], drop=False)
+units = pd.read_table(config["units"], dtype=unit_dtypes).set_index(["sample", "unit"], drop=False)
 units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
-validate(units, schema="schemas/units.schema.yaml")
+units["fq1_full"] = units["fq1"].apply(fq_converter)
+units["fq2_full"] = units["fq2"].apply(fq_converter)
 
-# print(config)
+validate(units, schema="schemas/units.schema.yaml")
 
 # Constrain the various wildcards to help with any rule ambiguities
 wildcard_constraints:
@@ -53,9 +71,6 @@ include: "rules/variant-exon.smk"
 
 def get_all_target_files():
     target_files = []
-    # target_files.append(expand(["results/diffexp/{contrast}.diffexp.tsv",
-    #     "results/diffexp/{contrast}.ma-plot.svg"],
-    #     contrast=config["diffexp"]["contrasts"]))
     target_files.append("results/pca.svg")
     target_files.append("results/qc/multiqc_report.html")
     
@@ -67,9 +82,6 @@ def get_all_target_files():
         target_files.append(expand("results/diffexp_mane/{contrast}.diffexp.top_{regulation_direction}.tsv",
             contrast=config["diffexp"]["contrasts"],
             regulation_direction=["upregulated","downregulated"]))
-        # target_files.append(expand(["results/diffexp_mane/{contrast}.diffexp.tsv",
-        #     "results/diffexp_mane/{contrast}.ma-plot.svg"],
-        #     contrast=config["diffexp"]["contrasts"]))
         target_files.append(expand("results/variants/{contrast}.{regulation_direction}_gene_pathogenic_variant_summary.tsv", contrast=config["diffexp"]["contrasts"], regulation_direction=["upregulated","downregulated"]))
 
     return target_files

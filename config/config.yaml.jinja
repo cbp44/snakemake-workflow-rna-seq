@@ -11,7 +11,8 @@ samples: config/samples.tsv
 units: config/units.tsv
 
 reads:
-  path: "resources/reads"
+  host_path: "{{ sequencing_read_folder }}"
+  path: "/mnt/reads"
 
 trimming:
   # skip trimming: false or true

@@ -1,3 +1,3 @@
-# ngs-workflow-rna-seq
+# snakemake-workflow-rna-seq
 
-Snakemake workflow for performing an RNA-seq analysis.
+Snakemake workflow integrated with copier to initialize and performing an RNA-seq analysis.

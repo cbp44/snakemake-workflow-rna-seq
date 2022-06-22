@@ -33,27 +33,27 @@ species:
   help: Give the species whose reference genome we are obtaining
   default: caenorhabditis_elegans
   choices:
-    "Human": "homo_sapiens"
-    "Mouse": "mus_musculus"
-    "Zebrafish": "danio_rerio"
+    "Human (H. sapiens)": "homo_sapiens"
+    "Mouse (M. musculus)": "mus_musculus"
+    "Zebrafish (D. rerio)": "danio_rerio"
     "Worm (C. elegans)": "caenorhabditis_elegans"
     "Fruitfly (D. melanogaster)": "drosophila_melanogaster"
-    "Mouse Lemur": "microcebus_murinus"
+    "Mouse Lemur (M. murinus)": "microcebus_murinus"
 
 skip_adapter_trimming:
   type: bool
-  help: Should we skip the adapter trimming step? Keep this enabled for HKUST service, but disable it if analyzing public data.
+  help: Should we skip the adapter trimming step? Say no if for HKUST service.
   default: false
+
+sequencing_read_folder:
+  type: str
+  help: Enter the path on the host where the sequencing reads exist.
+  default: /disk2/bgi/R1100400190016B
 
 is_hkust:
   type: bool
   default: true
   help: Is this an analysis for the HKUST sequencing service?
-
-sequencing_read_folder:
-  type: str
-  help: Enter the path where the sequencing reads exist. The fastq files will be copied from here, so this path needs to be fully accessible right now.
-  default: /disk2/bgi/R1100400190016B
 
 sample_sheet:
   type: str

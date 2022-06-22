@@ -1,7 +1,9 @@
 *
 #!/.test
-!/.test/.config
+!/.test/config
 !/config
 !/workflow
+!/extensions
 !copier.yml
+!Dockerfile
 !*.jinja
