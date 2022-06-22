@@ -68,6 +68,7 @@ include: "rules/qc.smk"
 # include: "rules/transfer.smk"
 include: "rules/download.smk"
 include: "rules/variant-exon.smk"
+include: "rules/gene_names.smk"
 
 def get_all_target_files():
     target_files = []
